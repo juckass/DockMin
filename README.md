@@ -9,7 +9,12 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Administra ambientes de desarrollo, QA y staging para varios clientes.
 - Ejecuta comandos Docker personalizados por ambiente.
 - Centraliza logs y errores.
-- Expone una API REST documentada con Swagger.
+- Exposición de API REST documentada con Swagger.
+- Soporta soft delete (borrado lógico) y listado de eliminados.
+- Paginación y filtros en listados.
+- Validación de unicidad de slug.
+- Manejo robusto de errores y validaciones.
+- Pruebas unitarias para servicios y controladores.
 
 ---
 
@@ -21,14 +26,15 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - **Winston** (logs centralizados)
 - **Dotenv + @nestjs/config** (variables de entorno)
 - **Filtro global de errores** (manejo uniforme de excepciones)
+- **Jest** (pruebas unitarias)
 
 ---
 
 ## 🏗️ Estructura básica
 
 - `src/core`: Servicios generales (logger, gestor de errores)
-- `src/clientes`: CRUD de clientes
-- `src/ambientes`: CRUD y control de ambientes Docker
+- `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
+- `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
 
 ---
 
@@ -59,16 +65,52 @@ Accede a la documentación interactiva en:
 
 ---
 
-## 📝 Ejemplo de endpoint
+## 📬 Endpoints principales
+
+### Clientes
+
+- `GET /clientes` — Listar clientes (paginación y filtros)
+- `GET /clientes/:id` — Obtener cliente por ID
+- `POST /clientes` — Crear cliente
+- `PUT /clientes/:id` — Actualizar cliente
+- `DELETE /clientes/:id` — Eliminar (soft delete) cliente
+
+### Ambientes
+
+- `GET /ambientes` — Listar ambientes (paginación y filtros)
+- `GET /ambientes/:id` — Obtener ambiente por ID
+- `POST /ambientes` — Crear ambiente
+- `PUT /ambientes/:id` — Actualizar ambiente
+- `DELETE /ambientes/:id` — Eliminar (soft delete) ambiente
+- `GET /ambientes/cliente/:clienteId` — Listar ambientes por cliente
+- `GET /ambientes/eliminados` — Listar ambientes eliminados
+
+---
+
+## 📝 Ejemplos de body para la API
+
+### Crear cliente
 
 ```json
-POST /ambientes
+{
+  "nombre": "Empresa Sura",
+  "slug": "sura"
+}
+```
+
+### Crear ambiente
+
+```json
 {
   "clienteId": 1,
   "nombre": "qa",
   "path": "/proyectos/sura/qa",
-  "comandoUp": "docker compose up -d",
-  "comandoDown": "docker compose down"
+  "prefijo": "sura_qa",
+  "comandoUp": "docker compose --profile=nginx up -d",
+  "comandoDown": "docker compose down",
+  "perfiles": ["nginx", "php", "mysql"],
+  "autostart": true,
+  "orden": 1
 }
 ```
 
@@ -81,10 +123,23 @@ POST /ambientes
 
 ---
 
-## 📦 Próximos pasos sugeridos
+## 🧪 Pruebas
 
-- Implementar nuevos módulos o endpoints según necesidades.
-- Conectar un frontend para administración visual.
-- Consultar la documentación interna para detalles avanzados.
+- Ejecuta las pruebas unitarias con:
+  ```bash
+  npm run test
+  ```
+- Ejecuta las pruebas de cobertura con:
+  ```bash
+  npm run test:cov
+  ```
 
 ---
+
+## 📦 Próximos pasos sugeridos
+
+- Implementar módulo central de auditoría.
+- Agregar autenticación y autorización.
+- Crear módulo especial para ejecución de comandos Docker.
+- Conectar un frontend para administración visual.
+- Consultar la documentación interna para detalles avanzados.

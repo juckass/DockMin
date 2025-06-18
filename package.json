@@ -86,7 +86,8 @@
       "/src/core/core.module.ts",
       "/src/clientes/clientes.module.ts",
       "/src/app.module.ts",
-      "/src/main.ts"
+      "/src/main.ts",
+      "/src/ambientes/ambientes.module.ts"
     ]
   }
 }

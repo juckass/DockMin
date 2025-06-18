@@ -25,6 +25,8 @@ async function bootstrap() {
     .setTitle('Dockmin API')
     .setDescription('Documentación de la API de Dockmin')
     .setVersion('1.0')
+    .addTag('Clientes')
+    .addTag('Ambientes')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

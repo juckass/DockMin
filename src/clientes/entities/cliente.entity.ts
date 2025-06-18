@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 
 @Entity('clientes')
 export class Cliente {
@@ -10,4 +10,7 @@ export class Cliente {
 
   @Column({ unique: true })
   slug: string;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 }
