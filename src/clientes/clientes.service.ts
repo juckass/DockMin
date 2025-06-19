@@ -4,6 +4,7 @@ import { Repository, Like } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { slugify } from '../core/utils/slugify';
 
 @Injectable()
 export class ClientesService {
@@ -13,12 +14,24 @@ export class ClientesService {
   ) {}
 
   async create(createClienteDto: CreateClienteDto) {
-    // Verifica si ya existe un cliente con el mismo slug
-    const existing = await this.clienteRepository.findOneBy({ slug: createClienteDto.slug });
-    if (existing) {
+    const slug = slugify(createClienteDto.nombre);
+
+    // Validar que no exista un cliente con el mismo nombre
+    const existingNombre = await this.clienteRepository.findOneBy({ nombre: createClienteDto.nombre });
+    if (existingNombre) {
+      throw new BadRequestException('Ya existe un cliente con ese nombre');
+    }
+
+    // Validar que no exista un cliente con el mismo slug
+    const existingSlug = await this.clienteRepository.findOneBy({ slug });
+    if (existingSlug) {
       throw new BadRequestException('Ya existe un cliente con ese slug');
     }
-    const cliente = this.clienteRepository.create(createClienteDto);
+
+    const cliente = this.clienteRepository.create({
+      ...createClienteDto,
+      slug,
+    });
     return this.clienteRepository.save(cliente);
   }
 
@@ -54,14 +67,26 @@ export class ClientesService {
   }
 
   async update(id: number, updateClienteDto: UpdateClienteDto) {
-    // Si se va a actualizar el slug, verifica que no exista en otro cliente
-    if (updateClienteDto.slug) {
-      const existing = await this.clienteRepository.findOneBy({ slug: updateClienteDto.slug });
-      if (existing && existing.id !== id) {
+    let slug: string | undefined;
+    if (updateClienteDto.nombre) {
+      slug = slugify(updateClienteDto.nombre);
+
+      // Validar que no exista otro cliente con el mismo nombre
+      const existingNombre = await this.clienteRepository.findOneBy({ nombre: updateClienteDto.nombre });
+      if (existingNombre && existingNombre.id !== id) {
+        throw new BadRequestException('Ya existe un cliente con ese nombre');
+      }
+
+      // Validar que no exista otro cliente con el mismo slug
+      const existingSlug = await this.clienteRepository.findOneBy({ slug });
+      if (existingSlug && existingSlug.id !== id) {
         throw new BadRequestException('Ya existe un cliente con ese slug');
       }
     }
-    const result = await this.clienteRepository.update(id, updateClienteDto);
+    const result = await this.clienteRepository.update(id, {
+      ...updateClienteDto,
+      ...(slug ? { slug } : {}),
+    });
     if (result.affected === 0) {
       throw new NotFoundException('No se pudo actualizar: cliente no encontrado');
     }

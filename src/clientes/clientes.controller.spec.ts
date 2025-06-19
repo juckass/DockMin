@@ -29,6 +29,9 @@ describe('ClientesController', () => {
 
     controller = module.get<ClientesController>(ClientesController);
     service = module.get<ClientesService>(ClientesService);
+
+    // Limpia los mocks antes de cada test
+    Object.values(mockClientesService).forEach(fn => fn.mockReset());
   });
 
   it('should be defined', () => {
@@ -36,8 +39,8 @@ describe('ClientesController', () => {
   });
 
   it('should create a cliente', async () => {
-    const dto: CreateClienteDto = { nombre: 'Test', slug: 'test' };
-    const result = { id: 1, ...dto };
+    const dto: CreateClienteDto = { nombre: 'Test' };
+    const result = { id: 1, nombre: 'Test', slug: 'test' };
     mockClientesService.create.mockResolvedValue(result);
 
     expect(await controller.create(dto)).toEqual(result);

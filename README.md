@@ -12,7 +12,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Exposición de API REST documentada con Swagger.
 - Soporta soft delete (borrado lógico) y listado de eliminados.
 - Paginación y filtros en listados.
-- Validación de unicidad de slug.
+- Validación automática y unicidad de slug.
 - Manejo robusto de errores y validaciones.
 - Pruebas unitarias para servicios y controladores.
 
@@ -30,31 +30,38 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 
 ---
 
-## 🏗️ Estructura básica
+## 🛠️ Instalación y puesta en marcha
 
-- `src/core`: Servicios generales (logger, gestor de errores)
-- `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
-- `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
+### 1. Clona el repositorio
 
----
+```bash
+git clone https://github.com/tu-usuario/dockmin.git
+cd dockmin
+```
 
-## 🔧 Configuración rápida
+### 2. Instala las dependencias
 
-1. **Clona el repositorio y entra al proyecto**
-2. **Instala dependencias**
-   ```bash
-   npm install
-   ```
-3. **Crea un archivo `.env`**
-   ```env
-   PORT=3000
-   DATABASE_PATH=./data/dockmin.sqlite
-   LOGS_PATH=./logs
-   ```
-4. **Inicia la aplicación**
-   ```bash
-   npm run start:dev
-   ```
+```bash
+npm install
+```
+
+### 3. Configura las variables de entorno
+
+Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+
+```env
+PORT=3000
+DATABASE_PATH=./data/dockmin.sqlite
+LOGS_PATH=./logs
+```
+
+### 4. Inicia la aplicación
+
+```bash
+npm run start:dev
+```
+
+La API estará disponible en [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -93,8 +100,7 @@ Accede a la documentación interactiva en:
 
 ```json
 {
-  "nombre": "Empresa Sura",
-  "slug": "sura"
+  "nombre": "DemoCorp"
 }
 ```
 
@@ -104,8 +110,8 @@ Accede a la documentación interactiva en:
 {
   "clienteId": 1,
   "nombre": "qa",
-  "path": "/proyectos/sura/qa",
-  "prefijo": "sura_qa",
+  "path": "/proyectos/demo/qa",
+  "prefijo": "demo_qa",
   "comandoUp": "docker compose --profile=nginx up -d",
   "comandoDown": "docker compose down",
   "perfiles": ["nginx", "php", "mysql"],
@@ -133,6 +139,14 @@ Accede a la documentación interactiva en:
   ```bash
   npm run test:cov
   ```
+
+---
+
+## 🏗️ Estructura básica del proyecto
+
+- `src/core`: Servicios generales (logger, gestor de errores, utilidades)
+- `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
+- `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
 
 ---
 

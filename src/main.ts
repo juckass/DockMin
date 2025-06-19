@@ -10,8 +10,9 @@ import { LoggerService } from './core/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-
+  const configService = app.get(ConfigService);
+  const node_env = configService.get<string>('NODE_ENV') || 'development';
+  const port = configService.get<number>('PORT') || 3000;
     // Activa la validación global
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true, // Elimina propiedades no definidas en el DTO
@@ -19,25 +20,24 @@ async function bootstrap() {
       transform: true, // Transforma payloads a los tipos de los DTOs
     }));
 
-    
-  // Configuración de Swagger
-  const config = new DocumentBuilder()
-    .setTitle('Dockmin API')
-    .setDescription('Documentación de la API de Dockmin')
-    .setVersion('1.0')
-    .addTag('Clientes')
-    .addTag('Ambientes')
-    .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
+  if (node_env !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Dockmin API')
+      .setDescription('Documentación de la API de Dockmin')
+      .setVersion('1.0')
+      .addTag('Clientes')
+      .addTag('Ambientes')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+  }
   // Inyecta el logger y registra el filtro global
   const logger = app.get(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(logger));
   
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 3000;
+
+
   await app.listen(port);
 }
 bootstrap();

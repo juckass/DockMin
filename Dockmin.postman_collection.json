@@ -30,7 +30,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Empresa Sura\",\n  \"slug\": \"sura\"\n}"
+              "raw": "{\n  \"nombre\": \"Empresa Sura\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/clientes", "host": ["{{baseUrl}}"], "path": ["clientes"] }
           }
@@ -42,7 +42,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Empresa Sura Actualizada\",\n  \"slug\": \"sura\"\n}"
+              "raw": "{\n  \"nombre\": \"Empresa Sura Actualizada\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes", "1"] }
           }
