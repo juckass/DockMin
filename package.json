@@ -76,11 +76,20 @@
       "**/src/**/*.spec.ts",
       "**/test/**/*.spec.ts"
     ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/test/helpers/"
+    ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "src/**/*.(t|j)s"
+      "src/**/*.(t|j)s",
+      "!src/main.ts",
+      "!src/app.module.ts",
+      "!src/clientes/clientes.module.ts",
+      "!src/ambientes/ambientes.module.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"

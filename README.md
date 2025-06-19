@@ -14,7 +14,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Paginación y filtros en listados.
 - Validación automática y unicidad de slug.
 - Manejo robusto de errores y validaciones.
-- Pruebas unitarias y de integración.
+- Pruebas unitarias y de integración con base de datos en memoria.
 
 ---
 
@@ -127,6 +127,7 @@ Accede a la documentación interactiva en:
 
 - Todos los errores son gestionados por un filtro global y registrados con Winston.
 - Los logs se almacenan en la carpeta definida por `LOGS_PATH` en `.env`.
+- Los logs de pruebas pueden ser eliminados automáticamente tras la ejecución de los tests.
 
 ---
 
@@ -145,6 +146,8 @@ Accede a la documentación interactiva en:
   npm run test:integration
   ```
   > Asegúrate de que el script `"test:integration": "NODE_ENV=test jest test/integration"` esté en tu `package.json`.
+
+- Los directorios de logs de pruebas (`/test-logs` o similares) se eliminan automáticamente tras los tests.
 
 ---
 

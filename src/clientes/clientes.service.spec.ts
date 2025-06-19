@@ -67,6 +67,17 @@ describe('ClientesService', () => {
     await expect(service.create(dto)).rejects.toThrow(BadRequestException);
   });
 
+  it('should throw BadRequestException if cliente nombre already exists', async () => {
+    const createDto = { nombre: 'DemoCorp' };
+    // Simula que ya existe un cliente con ese nombre
+    (clienteRepository.findOneBy as jest.Mock).mockImplementation(({ nombre }) => {
+      if (nombre === 'DemoCorp') return { id: 1, nombre: 'DemoCorp' };
+      return null;
+    });
+
+    await expect(service.create(createDto as any)).rejects.toThrow(BadRequestException);
+  });
+
   it('should return paginated clientes with filters', async () => {
     const clientes = [{ id: 1, nombre: 'Test', slug: 'test' }];
     const total = 1;
@@ -151,6 +162,7 @@ describe('ClientesService', () => {
   it('should throw NotFoundException if cliente not found on update', async () => {
     const dto: UpdateClienteDto = { nombre: 'Nuevo Nombre' };
     (clienteRepository.findOneBy as jest.Mock).mockResolvedValue(null);
+    // Simula que no se actualizó ningún registro
     (clienteRepository.update as jest.Mock).mockResolvedValue({ affected: 0 });
 
     await expect(service.update(999, dto)).rejects.toThrow(NotFoundException);
@@ -164,7 +176,8 @@ describe('ClientesService', () => {
     expect(result).toEqual({ affected: 1 });
   });
 
-  it('should throw NotFoundException if cliente not found on remove', async () => {
+  it('should throw NotFoundException if cliente to remove does not exist', async () => {
+    // Simula que no se eliminó ningún registro
     (clienteRepository.softDelete as jest.Mock).mockResolvedValue({ affected: 0 });
 
     await expect(service.remove(999)).rejects.toThrow(NotFoundException);

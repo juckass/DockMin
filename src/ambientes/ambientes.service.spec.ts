@@ -170,7 +170,8 @@ describe('AmbientesService', () => {
     expect(result).toEqual({ affected: 1 });
   });
 
-  it('should throw NotFoundException if ambiente not found on remove', async () => {
+  it('should throw NotFoundException if ambiente to remove does not exist', async () => {
+    // Simula que no se eliminó ningún registro
     (ambienteRepository.softDelete as jest.Mock).mockResolvedValue({ affected: 0 });
 
     await expect(service.remove(999)).rejects.toThrow(NotFoundException);

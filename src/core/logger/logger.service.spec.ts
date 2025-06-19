@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerService } from './logger.service';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
+import * as path from 'path';
 
 describe('LoggerService', () => {
   let service: LoggerService;
@@ -63,5 +65,31 @@ describe('LoggerService', () => {
     service.verbose?.('Test verbose');
     expect(spy).toHaveBeenCalledWith('Test verbose');
     spy.mockRestore();
+  });
+
+  it('should create the logs folder if it does not exist', () => {
+    const mockConfigService = {
+      get: (key: string) => (key === 'LOGS_PATH' ? './test-logs-coverage' : undefined),
+    };
+
+    // Simulate that the folder does not exist
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+    const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync').mockImplementation(() => undefined);
+
+    // Load the service directly to force the constructor
+    const { LoggerService } = require('./logger.service');
+    new LoggerService(mockConfigService as any);
+
+    expect(existsSyncSpy).toHaveBeenCalledWith('./test-logs-coverage');
+    expect(mkdirSyncSpy).toHaveBeenCalledWith('./test-logs-coverage', { recursive: true });
+
+    jest.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    const logDir = path.resolve('./test-logs');
+    if (fs.existsSync(logDir)) {
+      fs.rmSync(logDir, { recursive: true, force: true });
+    }
   });
 });

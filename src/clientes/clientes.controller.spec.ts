@@ -29,9 +29,7 @@ describe('ClientesController', () => {
 
     controller = module.get<ClientesController>(ClientesController);
     service = module.get<ClientesService>(ClientesService);
-
-    // Limpia los mocks antes de cada test
-    Object.values(mockClientesService).forEach(fn => fn.mockReset());
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -64,19 +62,22 @@ describe('ClientesController', () => {
   });
 
   it('should update a cliente', async () => {
-    const dto: UpdateClienteDto = { nombre: 'Nuevo' };
-    const result = { affected: 1 };
-    mockClientesService.update.mockResolvedValue(result);
+    const updateDto = { nombre: 'NuevoNombre' };
+    const updatedCliente = { id: 1, nombre: 'NuevoNombre' };
+    mockClientesService.update = jest.fn().mockResolvedValue(updatedCliente);
 
-    expect(await controller.update(1, dto)).toEqual(result);
-    expect(service.update).toHaveBeenCalledWith(1, dto);
+    const result = await controller.update(1, updateDto);
+
+    expect(service.update).toHaveBeenCalledWith(1, updateDto);
+    expect(result).toEqual(updatedCliente);
   });
 
   it('should remove a cliente', async () => {
-    const result = { affected: 1 };
-    mockClientesService.remove.mockResolvedValue(result);
+    mockClientesService.remove.mockResolvedValue({ id: 1, nombre: 'DemoCorp' });
 
-    expect(await controller.remove(1)).toEqual(result);
+    const result = await controller.remove(1);
+
     expect(service.remove).toHaveBeenCalledWith(1);
+    expect(result).toEqual({ id: 1, nombre: 'DemoCorp' });
   });
 });

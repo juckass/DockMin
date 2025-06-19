@@ -125,6 +125,7 @@ describe('AmbientesController', () => {
     mockAmbientesService.findDeletedByCliente.mockResolvedValue(deletedAmbientes);
 
     const result = await controller.findDeletedAmbientes(1);
+
     expect(service.findDeletedByCliente).toHaveBeenCalledWith(1);
     expect(result).toEqual(deletedAmbientes);
   });
