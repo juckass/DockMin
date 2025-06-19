@@ -71,8 +71,29 @@ export class AmbientesService {
     return result;
   }
 
-  async findByCliente(clienteId: number) {
-    return this.ambienteRepository.find({ where: { clienteId } });
+  async findByCliente(
+    clienteId: number,
+    query: { page?: number; limit?: number; nombre?: string }
+  ) {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? query.limit : 10;
+    const skip = (page - 1) * limit;
+
+    const where: any = { clienteId };
+    if (query.nombre) where.nombre = Like(`%${query.nombre}%`);
+
+    const [data, total] = await this.ambienteRepository.findAndCount({
+      where,
+      skip,
+      take: limit,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   } 
 
   async findAllWithDeleted() {
@@ -81,6 +102,11 @@ export class AmbientesService {
 
   async findDeleted() {
     const all = await this.ambienteRepository.find({ withDeleted: true });
+    return all.filter(a => a.deletedAt !== undefined);
+  }
+
+  async findDeletedByCliente(clienteId: number) {
+    const all = await this.ambienteRepository.find({ where: { clienteId }, withDeleted: true });
     return all.filter(a => a.deletedAt !== undefined);
   }
 }

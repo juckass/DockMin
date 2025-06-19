@@ -19,13 +19,13 @@ export class ClientesService {
     // Validar que no exista un cliente con el mismo nombre
     const existingNombre = await this.clienteRepository.findOneBy({ nombre: createClienteDto.nombre });
     if (existingNombre) {
-      throw new BadRequestException('Ya existe un cliente con ese nombre');
+      throw new BadRequestException('Ya existe un cliente con ese nombre. Por favor, elige otro.');
     }
 
     // Validar que no exista un cliente con el mismo slug
     const existingSlug = await this.clienteRepository.findOneBy({ slug });
     if (existingSlug) {
-      throw new BadRequestException('Ya existe un cliente con ese slug');
+      throw new BadRequestException('El identificador generado (slug) ya existe. Cambia el nombre del cliente.');
     }
 
     const cliente = this.clienteRepository.create({
@@ -61,7 +61,7 @@ export class ClientesService {
   async findOne(id: number) {
     const cliente = await this.clienteRepository.findOneBy({ id });
     if (!cliente) {
-      throw new NotFoundException('Cliente no encontrado');
+      throw new NotFoundException('El cliente especificado no existe. Verifica el clienteId.');
     }
     return cliente;
   }

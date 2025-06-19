@@ -117,11 +117,40 @@
           }
         },
         {
+          "name": "Listar ambientes por cliente (paginado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ambientes/cliente/2?page=1&limit=10&nombre=qa",
+              "host": ["{{baseUrl}}"],
+              "path": ["ambientes", "cliente", "2"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "nombre", "value": "qa" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Listar ambientes eliminados",
           "request": {
             "method": "GET",
             "header": [],
             "url": { "raw": "{{baseUrl}}/ambientes/eliminados", "host": ["{{baseUrl}}"], "path": ["ambientes", "eliminados"] }
+          }
+        },
+        {
+          "name": "Listar ambientes eliminados por cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/1/ambientes/eliminados",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes", "1", "ambientes", "eliminados"]
+            }
           }
         }
       ]

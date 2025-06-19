@@ -3,11 +3,15 @@ import { AmbientesService } from './ambientes.service';
 import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
 import { ApiTags, ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ClientesService } from '../clientes/clientes.service';
 
 @ApiTags('Ambientes')
 @Controller('ambientes')
 export class AmbientesController {
-  constructor(private readonly ambientesService: AmbientesService) {}
+  constructor(
+    private readonly clientesService: ClientesService,
+    private readonly ambientesService: AmbientesService,
+  ) {}
 
   @Post()
   @ApiBody({
@@ -82,13 +86,23 @@ export class AmbientesController {
 
   @Get('/cliente/:clienteId')
   @ApiParam({ name: 'clienteId', type: Number, description: 'ID del cliente' })
-  findByCliente(@Param('clienteId', ParseIntPipe) clienteId: number) {
-    return this.ambientesService.findByCliente(clienteId);
+  findByCliente(
+    @Param('clienteId') clienteId: number,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('nombre') nombre?: string
+  ) {
+    return this.ambientesService.findByCliente(Number(clienteId), { page: Number(page), limit: Number(limit), nombre });
   }
 
   @Get('eliminados')
   @ApiResponse({ status: 200, description: 'Lista de ambientes eliminados.' })
   findDeleted() {
     return this.ambientesService.findDeleted();
+  }
+
+  @Get(':id/ambientes/eliminados')
+  async findDeletedAmbientes(@Param('id') id: number) {
+    return this.ambientesService.findDeletedByCliente(Number(id));
   }
 }

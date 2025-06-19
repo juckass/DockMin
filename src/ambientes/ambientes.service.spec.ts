@@ -53,12 +53,12 @@ describe('AmbientesService', () => {
     const dto: CreateAmbienteDto = {
       clienteId: 1,
       nombre: 'qa',
-      path: '/proyectos/sura/qa',
+      path: '/proyectos/demo/qa',
       comandoUp: 'docker compose up -d',
       comandoDown: 'docker compose down',
     };
     const entity: Ambiente = { id: 1, ...dto };
-    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Cliente', slug: 'cliente' });
+    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Demo', slug: 'demo' });
     (ambienteRepository.create as jest.Mock).mockReturnValue(entity);
     (ambienteRepository.save as jest.Mock).mockResolvedValue(entity);
 
@@ -73,7 +73,7 @@ describe('AmbientesService', () => {
     const dto: CreateAmbienteDto = {
       clienteId: 999,
       nombre: 'qa',
-      path: '/proyectos/sura/qa',
+      path: '/proyectos/demo/qa',
       comandoUp: 'docker compose up -d',
       comandoDown: 'docker compose down',
     };
@@ -84,8 +84,8 @@ describe('AmbientesService', () => {
 
   it('should return paginated ambientes with filters', async () => {
     const ambientes: Ambiente[] = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' },
-      { id: 2, clienteId: 1, nombre: 'qa2', path: '/proyectos/sura/qa2', comandoUp: '', comandoDown: '' },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' },
+      { id: 2, clienteId: 1, nombre: 'qa2', path: '/proyectos/demo/qa2', comandoUp: '', comandoDown: '' },
     ];
     const total = 2;
     (ambienteRepository.findAndCount as jest.Mock).mockResolvedValue([ambientes, total]);
@@ -110,7 +110,7 @@ describe('AmbientesService', () => {
 
   it('should return paginated ambientes without filters', async () => {
     const ambientes: Ambiente[] = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' },
     ];
     const total = 1;
     (ambienteRepository.findAndCount as jest.Mock).mockResolvedValue([ambientes, total]);
@@ -131,7 +131,7 @@ describe('AmbientesService', () => {
   });
 
   it('should return one ambiente by id', async () => {
-    const ambiente: Ambiente = { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' };
+    const ambiente: Ambiente = { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' };
     (ambienteRepository.findOneBy as jest.Mock).mockResolvedValue(ambiente);
 
     const result = await service.findOne(1);
@@ -176,21 +176,32 @@ describe('AmbientesService', () => {
     await expect(service.remove(999)).rejects.toThrow(NotFoundException);
   });
 
-  it('should return ambientes by clienteId', async () => {
+  it('should return ambientes by clienteId (paginado)', async () => {
     const ambientes: Ambiente[] = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' },
     ];
-    (ambienteRepository.find as jest.Mock).mockResolvedValue(ambientes);
+    const total = 1;
+    (ambienteRepository.findAndCount as jest.Mock).mockResolvedValue([ambientes, total]);
 
-    const result = await service.findByCliente(1);
-    expect(ambienteRepository.find).toHaveBeenCalledWith({ where: { clienteId: 1 } });
-    expect(result).toEqual(ambientes);
+    const result = await service.findByCliente(1, {});
+
+    expect(ambienteRepository.findAndCount).toHaveBeenCalledWith({
+      where: { clienteId: 1 },
+      skip: 0,
+      take: 10,
+    });
+    expect(result).toEqual({
+      data: ambientes,
+      total,
+      page: 1,
+      lastPage: 1,
+    });
   });
 
   it('should return all ambientes with deleted', async () => {
     const ambientes: Ambiente[] = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '', deletedAt: undefined },
-      { id: 2, clienteId: 2, nombre: 'prod', path: '/proyectos/sura/prod', comandoUp: '', comandoDown: '', deletedAt: new Date() },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '', deletedAt: undefined },
+      { id: 2, clienteId: 2, nombre: 'prod', path: '/proyectos/demo/prod', comandoUp: '', comandoDown: '', deletedAt: new Date() },
     ];
     (ambienteRepository.find as jest.Mock).mockResolvedValue(ambientes);
 
@@ -201,13 +212,37 @@ describe('AmbientesService', () => {
 
   it('should return only deleted ambientes', async () => {
     const ambientes: Ambiente[] = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '', deletedAt: undefined },
-      { id: 2, clienteId: 2, nombre: 'prod', path: '/proyectos/sura/prod', comandoUp: '', comandoDown: '', deletedAt: new Date() },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '', deletedAt: undefined },
+      { id: 2, clienteId: 2, nombre: 'prod', path: '/proyectos/demo/prod', comandoUp: '', comandoDown: '', deletedAt: new Date() },
     ];
     (ambienteRepository.find as jest.Mock).mockResolvedValue(ambientes);
 
     const result = await service.findDeleted();
     expect(ambienteRepository.find).toHaveBeenCalledWith({ withDeleted: true });
-    expect(result).toEqual(ambientes.filter(a => a.deletedAt));
+    expect(result).toEqual(ambientes.filter(a => a.deletedAt !== undefined));
+  });
+
+  it('should return paginated ambientes by clienteId with filters', async () => {
+    const ambientes: Ambiente[] = [
+      { id: 1, clienteId: 2, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' },
+      { id: 2, clienteId: 2, nombre: 'qa2', path: '/proyectos/demo/qa2', comandoUp: '', comandoDown: '' },
+    ];
+    const total = 2;
+    const clienteId = 2;
+    (ambienteRepository.findAndCount as jest.Mock).mockResolvedValue([ambientes, total]);
+
+    const result = await service.findByCliente(clienteId, { page: 1, limit: 10, nombre: 'qa' });
+
+    expect(ambienteRepository.findAndCount).toHaveBeenCalledWith({
+      where: { clienteId, nombre: Like('%qa%') },
+      skip: 0,
+      take: 10,
+    });
+    expect(result).toEqual({
+      data: ambientes,
+      total,
+      page: 1,
+      lastPage: 1,
+    });
   });
 });

@@ -3,6 +3,9 @@ import { AmbientesController } from './ambientes.controller';
 import { AmbientesService } from './ambientes.service';
 import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
+import { Like } from 'typeorm';
+import { Ambiente } from './entities/ambiente.entity';
+import { ClientesService } from '../clientes/clientes.service'; // importa el servicio real o ajusta el path
 
 describe('AmbientesController', () => {
   let controller: AmbientesController;
@@ -14,6 +17,12 @@ describe('AmbientesController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    findByCliente: jest.fn(),
+    findDeletedByCliente: jest.fn(),
+  };
+
+  const mockClientesService = {
+    // puedes dejarlo vacío si no lo usas en estos tests
   };
 
   beforeEach(async () => {
@@ -23,6 +32,10 @@ describe('AmbientesController', () => {
         {
           provide: AmbientesService,
           useValue: mockAmbientesService,
+        },
+        {
+          provide: ClientesService,
+          useValue: mockClientesService,
         },
       ],
     }).compile();
@@ -84,5 +97,35 @@ describe('AmbientesController', () => {
 
     expect(await controller.remove(1)).toEqual(result);
     expect(service.remove).toHaveBeenCalledWith(1);
+  });
+
+  it('should listar ambientes por cliente (paginado)', async () => {
+    const ambientes: Ambiente[] = [
+      { id: 1, clienteId: 2, nombre: 'qa', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' },
+      { id: 2, clienteId: 2, nombre: 'qa2', path: '/proyectos/demo/qa2', comandoUp: '', comandoDown: '' },
+    ];
+    const paginatedResult = {
+      data: ambientes,
+      total: 2,
+      page: 1,
+      lastPage: 1,
+    };
+    mockAmbientesService.findByCliente.mockResolvedValue(paginatedResult);
+
+    const result = await controller.findByCliente(2, 1, 10, 'qa');
+
+    expect(service.findByCliente).toHaveBeenCalledWith(2, { page: 1, limit: 10, nombre: 'qa' });
+    expect(result).toEqual(paginatedResult);
+  });
+
+  it('should return deleted ambientes by clienteId', async () => {
+    const deletedAmbientes = [
+      { id: 2, clienteId: 1, nombre: 'qa', deletedAt: new Date() },
+    ];
+    mockAmbientesService.findDeletedByCliente.mockResolvedValue(deletedAmbientes);
+
+    const result = await controller.findDeletedAmbientes(1);
+    expect(service.findDeletedByCliente).toHaveBeenCalledWith(1);
+    expect(result).toEqual(deletedAmbientes);
   });
 });
