@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreModule } from './core/core.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { AmbientesModule } from './ambientes/ambientes.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,7 +19,7 @@ import { AmbientesModule } from './ambientes/ambientes.module';
             ? ':memory:'
             : config.get('DATABASE_PATH') || './data/dockmin.sqlite',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // solo para desarrollo y test
+        synchronize: config.get('NODE_ENV') === 'development' && config.get('DATABASE_SYNCHRONIZE') ? true : false, // solo para desarrollo y test
         dropSchema: config.get('NODE_ENV') === 'test',
       }),
     }),
