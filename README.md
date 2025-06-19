@@ -169,3 +169,25 @@ Accede a la documentación interactiva en:
 - Crear módulo especial para ejecución de comandos Docker.
 - Conectar un frontend para administración visual.
 - Consultar la documentación interna para detalles avanzados.
+
+---
+
+## ⚠️ Importante: Permisos y ejecución de Docker
+
+- **Permisos de usuario:**  
+  Los comandos Docker que ejecuta Dockmin desde la API se corren con el mismo usuario del sistema que ejecuta la aplicación NestJS.  
+  - Si ejecutas Dockmin como **root**, tendrás acceso completo a Docker.
+  - Si ejecutas Dockmin como un usuario normal, ese usuario debe pertenecer al grupo `docker` (en Linux) para poder ejecutar comandos Docker sin sudo.
+  - Si Docker requiere permisos de root y la app no se ejecuta como root, los comandos fallarán.
+
+- **Seguridad:**  
+  No se recomienda ejecutar toda la aplicación como root en producción.  
+  Lo ideal es agregar el usuario de la app al grupo `docker` y restringir el acceso a la API.
+
+- **Chequeo de estado:**  
+  El futuro módulo Docker incluirá un endpoint para verificar:
+  - Si Docker está instalado.
+  - Si el servicio Docker está corriendo.
+  - Si el usuario tiene permisos para ejecutar Docker.
+
+---
