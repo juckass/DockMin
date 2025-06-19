@@ -15,9 +15,13 @@ import { AmbientesModule } from './ambientes/ambientes.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'sqlite',
-        database: config.get<string>('DATABASE_PATH', './data/dockmin.sqlite'),
+        database:
+          config.get('NODE_ENV') === 'test'
+            ? ':memory:'
+            : config.get('DATABASE_PATH') || './data/dockmin.sqlite',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Solo para desarrollo
+        synchronize: true, // solo para desarrollo y test
+        dropSchema: config.get('NODE_ENV') === 'test',
       }),
     }),
     CoreModule,

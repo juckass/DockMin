@@ -14,7 +14,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Paginación y filtros en listados.
 - Validación automática y unicidad de slug.
 - Manejo robusto de errores y validaciones.
-- Pruebas unitarias para servicios y controladores.
+- Pruebas unitarias y de integración.
 
 ---
 
@@ -26,7 +26,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - **Winston** (logs centralizados)
 - **Dotenv + @nestjs/config** (variables de entorno)
 - **Filtro global de errores** (manejo uniforme de excepciones)
-- **Jest** (pruebas unitarias)
+- **Jest + Supertest** (pruebas unitarias y de integración)
 
 ---
 
@@ -81,6 +81,7 @@ Accede a la documentación interactiva en:
 - `POST /clientes` — Crear cliente
 - `PUT /clientes/:id` — Actualizar cliente
 - `DELETE /clientes/:id` — Eliminar (soft delete) cliente
+- `GET /clientes/:id/ambientes/eliminados` — Listar ambientes eliminados de un cliente
 
 ### Ambientes
 
@@ -90,7 +91,7 @@ Accede a la documentación interactiva en:
 - `PUT /ambientes/:id` — Actualizar ambiente
 - `DELETE /ambientes/:id` — Eliminar (soft delete) ambiente
 - `GET /ambientes/cliente/:clienteId` — Listar ambientes por cliente
-- `GET /ambientes/eliminados` — Listar ambientes eliminados
+- `GET /ambientes/cliente/:clienteId/eliminados` — Listar ambientes eliminados por cliente
 
 ---
 
@@ -139,6 +140,11 @@ Accede a la documentación interactiva en:
   ```bash
   npm run test:cov
   ```
+- Ejecuta las pruebas de integración (base de datos en memoria):
+  ```bash
+  npm run test:integration
+  ```
+  > Asegúrate de que el script `"test:integration": "NODE_ENV=test jest test/integration"` esté en tu `package.json`.
 
 ---
 
@@ -147,11 +153,14 @@ Accede a la documentación interactiva en:
 - `src/core`: Servicios generales (logger, gestor de errores, utilidades)
 - `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
 - `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
+- `test/integration`: Pruebas de integración con base de datos en memoria
 
 ---
 
 ## 📦 Próximos pasos sugeridos
 
+- Mejorar la documentación Swagger con ejemplos de respuesta y errores.
+- Revisar y limpiar el código.
 - Implementar módulo central de auditoría.
 - Agregar autenticación y autorización.
 - Crear módulo especial para ejecución de comandos Docker.
