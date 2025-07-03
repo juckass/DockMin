@@ -10,5 +10,6 @@ import { ClientesModule } from '../clientes/clientes.module';
   imports: [ClientesModule, TypeOrmModule.forFeature([Ambiente, Cliente])],
   providers: [AmbientesService],
   controllers: [AmbientesController],
+  exports: [AmbientesService],
 })
 export class AmbientesModule {}

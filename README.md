@@ -7,14 +7,16 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 ## 🚀 ¿Qué hace Dockmin?
 
 - Administra ambientes de desarrollo, QA y staging para varios clientes.
-- Ejecuta comandos Docker personalizados por ambiente.
+- Ejecuta comandos Docker personalizados por ambiente (levantar, bajar, consultar estado de contenedores).
 - Centraliza logs y errores.
-- Exposición de API REST documentada con Swagger.
+- Exposición de API REST documentada con Swagger y colección Postman.
 - Soporta soft delete (borrado lógico) y listado de eliminados.
 - Paginación y filtros en listados.
 - Validación automática y unicidad de slug.
 - Manejo robusto de errores y validaciones.
 - Pruebas unitarias y de integración con base de datos en memoria.
+- **Módulo Docker desacoplado y seguro**: validación de comandos, logger centralizado, integración con ambientes.
+- **Pruebas de integración robustas**: cubren flujos completos de clientes, ambientes y operaciones Docker.
 
 ---
 
@@ -70,6 +72,8 @@ La API estará disponible en [http://localhost:3000](http://localhost:3000)
 Accede a la documentación interactiva en:  
 [http://localhost:3000/api](http://localhost:3000/api)
 
+También puedes usar la colección Postman incluida: `Dockmin.postman_collection.json`
+
 ---
 
 ## 📬 Endpoints principales
@@ -92,6 +96,13 @@ Accede a la documentación interactiva en:
 - `DELETE /ambientes/:id` — Eliminar (soft delete) ambiente
 - `GET /ambientes/cliente/:clienteId` — Listar ambientes por cliente
 - `GET /ambientes/cliente/:clienteId/eliminados` — Listar ambientes eliminados por cliente
+
+### Docker
+
+- `GET /docker/status` — Estado general de Docker (instalación, permisos, versión)
+- `POST /docker/up/:id` — Levantar ambiente Docker
+- `POST /docker/ps/:id` — Consultar contenedores del ambiente
+- `POST /docker/down/:id` — Bajar ambiente Docker
 
 ---
 
@@ -128,6 +139,7 @@ Accede a la documentación interactiva en:
 - Todos los errores son gestionados por un filtro global y registrados con Winston.
 - Los logs se almacenan en la carpeta definida por `LOGS_PATH` en `.env`.
 - Los logs de pruebas pueden ser eliminados automáticamente tras la ejecución de los tests.
+- Los errores de ejecución de comandos Docker quedan registrados en el logger central.
 
 ---
 
@@ -148,6 +160,7 @@ Accede a la documentación interactiva en:
   > Asegúrate de que el script `"test:integration": "NODE_ENV=test jest test/integration"` esté en tu `package.json`.
 
 - Los directorios de logs de pruebas (`/test-logs` o similares) se eliminan automáticamente tras los tests.
+- Las pruebas de integración cubren flujos completos de clientes, ambientes y operaciones Docker.
 
 ---
 
@@ -156,19 +169,19 @@ Accede a la documentación interactiva en:
 - `src/core`: Servicios generales (logger, gestor de errores, utilidades)
 - `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
 - `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
+- `src/docker`: Módulo para operaciones Docker (up, down, ps, validación, logger)
 - `test/integration`: Pruebas de integración con base de datos en memoria
 
 ---
 
 ## 📦 Próximos pasos sugeridos
 
-- Mejorar la documentación Swagger con ejemplos de respuesta y errores.
-- Revisar y limpiar el código.
-- Implementar módulo central de auditoría.
-- Agregar autenticación y autorización.
-- Crear módulo especial para ejecución de comandos Docker.
-- Conectar un frontend para administración visual.
-- Consultar la documentación interna para detalles avanzados.
+- [ ] **Seguridad:** Autenticación JWT, autorización por roles, rate limiting, validación avanzada de entradas.
+- [ ] **Mejoras Docker:** Parseo estructurado de `docker compose ps`, endpoint de logs, validación avanzada de comandos y paths, soporte de perfiles/variables.
+- [ ] **Documentación:** Ejemplos de respuesta y error en Swagger, guía de despliegue, sección de troubleshooting y FAQ, ejemplos de uso en Postman.
+- [ ] Revisar y limpiar el código.
+- [ ] Implementar módulo central de auditoría.
+- [ ] Conectar un frontend para administración visual.
 
 ---
 
@@ -185,7 +198,7 @@ Accede a la documentación interactiva en:
   Lo ideal es agregar el usuario de la app al grupo `docker` y restringir el acceso a la API.
 
 - **Chequeo de estado:**  
-  El futuro módulo Docker incluirá un endpoint para verificar:
+  El módulo Docker incluye un endpoint para verificar:
   - Si Docker está instalado.
   - Si el servicio Docker está corriendo.
   - Si el usuario tiene permisos para ejecutar Docker.

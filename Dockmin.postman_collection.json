@@ -154,6 +154,43 @@
           }
         }
       ]
+    },
+    {
+      "name": "Docker",
+      "item": [
+        {
+          "name": "Estado general de Docker",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/docker/status", "host": ["{{baseUrl}}"], "path": ["docker", "status"] }
+          }
+        },
+        {
+          "name": "Levantar ambiente Docker",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/docker/up/1", "host": ["{{baseUrl}}"], "path": ["docker", "up", "1"] }
+          }
+        },
+        {
+          "name": "Consultar contenedores Docker",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/docker/ps/1", "host": ["{{baseUrl}}"], "path": ["docker", "ps", "1"] }
+          }
+        },
+        {
+          "name": "Bajar ambiente Docker",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/docker/down/1", "host": ["{{baseUrl}}"], "path": ["docker", "down", "1"] }
+          }
+        }
+      ]
     }
   ],
   "variable": [

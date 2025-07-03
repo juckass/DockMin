@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreModule } from './core/core.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { AmbientesModule } from './ambientes/ambientes.module';
+import { DockerModule } from './docker/docker.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { AmbientesModule } from './ambientes/ambientes.module';
     CoreModule,
     ClientesModule,
     AmbientesModule,
+    DockerModule,
   ],
   controllers: [],
   providers: [],
