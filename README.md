@@ -1,5 +1,22 @@
 # 🚢 Dockmin
 
+## Índice
+
+- [¿Qué hace Dockmin?](#qué-hace-dockmin)
+- [Tecnologías principales](#tecnologías-principales)
+- [Instalación y puesta en marcha](#instalación-y-puesta-en-marcha)
+- [Documentación de la API](#documentación-de-la-api)
+- [Endpoints principales](#endpoints-principales)
+- [Ejemplos de body para la API](#ejemplos-de-body-para-la-api)
+- [Manejo de errores y logs](#manejo-de-errores-y-logs)
+- [Pruebas](#pruebas)
+- [Estructura básica del proyecto](#estructura-básica-del-proyecto)
+- [Próximos pasos sugeridos](#próximos-pasos-sugeridos)
+- [Importante: Permisos y ejecución de Docker](#importante-permisos-y-ejecución-de-docker)
+- [Preguntas frecuentes (FAQ)](#preguntas-frecuentes-faq)
+- [Guía rápida de seguridad](#guía-rápida-de-seguridad)
+- [Guía de despliegue](#guía-de-despliegue)
+
 Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, permitiendo levantar/bajar entornos, ver logs y administrar ambientes desde una API REST.
 
 ---
@@ -213,7 +230,7 @@ Puedes consultar y extender estos archivos para agregar ejemplos, descripciones 
 ## 📦 Próximos pasos sugeridos
 
 - [ ] **Seguridad:** Autenticación JWT, autorización por roles, rate limiting, validación avanzada de entradas.
-
+- [ ] **Tokens para aplicaciones:** Soporte para generación y validación de tokens de acceso para aplicaciones externas (frontends, bots, integraciones), con permisos y expiración configurables.
 - [ ] Implementar módulo central de auditoría.
 - [ ] Conectar un frontend para administración visual.
 
@@ -236,5 +253,98 @@ Puedes consultar y extender estos archivos para agregar ejemplos, descripciones 
   - Si Docker está instalado.
   - Si el servicio Docker está corriendo.
   - Si el usuario tiene permisos para ejecutar Docker.
+
+---
+
+## ❓ Preguntas frecuentes (FAQ)
+
+- **¿Puedo usar login tradicional y Google a la vez?**
+  Sí, puedes ofrecer ambos métodos de autenticación en paralelo. El backend valida ambos y genera un JWT propio para tu app.
+- **¿Cómo agrego un nuevo rol o permiso?**
+  Solo debes actualizar la entidad usuario y los guards de autorización.
+- **¿Cómo genero un token para un bot o integración?**
+  Usa el endpoint de generación de tokens para aplicaciones externas (ver próximos pasos).
+
+---
+
+## 🛡️ Guía rápida de seguridad
+
+- **Autenticación JWT**: Todos los endpoints sensibles requieren autenticación mediante JWT. Los tokens se generan al iniciar sesión y deben enviarse en el header `Authorization: Bearer <token>`.
+- **Roles y permisos**: El sistema soporta roles (`user`, `admin`). Los endpoints críticos requieren rol `admin`.
+- **Rate limiting**: Se recomienda habilitar rate limiting en producción para evitar ataques de fuerza bruta.
+- **CORS**: Configura CORS para restringir el acceso solo a dominios autorizados.
+- **Validación estricta**: Todas las entradas son validadas con `class-validator` y los comandos Docker pasan por validación adicional.
+- **Logs y auditoría**: Todos los accesos y errores quedan registrados. Se recomienda centralizar logs en sistemas como Sentry o ELK.
+- **No ejecutar como root**: Ejecuta Dockmin con un usuario limitado y agrégalo al grupo `docker`.
+- **Variables sensibles**: Usa `.env` y nunca subas este archivo al repositorio.
+
+---
+
+## 🚀 Guía de despliegue en producción
+
+1. **Configura las variables de entorno** (`.env`):
+   - PORT, DATABASE_PATH, LOGS_PATH, JWT_SECRET, JWT_EXPIRES_IN, etc.
+2. **Prepara la base de datos**: Usa SQLite para pruebas o PostgreSQL/MySQL para producción.
+3. **Configura logs externos**: Integra con Sentry, ELK o similar para monitoreo.
+4. **Habilita HTTPS**: Usa un proxy inverso (Nginx, Caddy) para servir la API por HTTPS.
+5. **Backups**: Programa backups automáticos de la base de datos y logs.
+6. **Despliega con PM2 o Docker**: Usa PM2 para procesos Node o crea un contenedor Docker para Dockmin.
+7. **Actualizaciones**: Haz pull de cambios, ejecuta migraciones y reinicia el servicio.
+
+---
+
+## 🔑 Tokens para aplicaciones externas (front/bots)
+
+- Dockmin permite generar tokens de acceso para aplicaciones externas (frontends, bots, integraciones).
+- Los tokens pueden tener permisos y expiración configurables.
+- Ejemplo de generación (próximamente):
+  ```json
+  {
+    "nombre": "bot-monitor",
+    "permisos": ["docker:ps", "docker:up"],
+    "expiraEn": "2h"
+  }
+  ```
+- Los tokens deben enviarse en el header `Authorization`.
+- Consulta la documentación de los endpoints `/auth/token` para más detalles.
+
+---
+
+## ❓ FAQ (Preguntas frecuentes)
+
+- **¿Por qué recibo 'Permiso denegado' al ejecutar comandos Docker?**
+  - El usuario que ejecuta Dockmin debe pertenecer al grupo `docker`.
+- **¿Cómo agrego un usuario al grupo docker?**
+  - En Linux: `sudo usermod -aG docker <usuario>`
+- **¿Puedo usar otra base de datos?**
+  - Sí, puedes configurar TypeORM para usar PostgreSQL o MySQL.
+- **¿Cómo agrego nuevos roles o permisos?**
+  - Modifica el guard de roles y la lógica de autorización en el módulo de autenticación.
+- **¿Cómo reporto un bug o contribuyo?**
+  - Abre un issue o pull request en el repositorio de GitHub.
+
+---
+
+## 🛣️ Roadmap y contribución
+
+- [ ] Autenticación JWT y OAuth (Google)
+- [ ] Módulo de auditoría y logs centralizados
+- [ ] Generación de tokens para apps externas
+- [ ] Frontend visual de administración
+- [ ] Mejoras en la documentación y ejemplos avanzados
+
+¿Quieres contribuir? ¡Toda ayuda es bienvenida! Lee las normas de contribución y abre un PR.
+
+---
+
+## 📚 Referencias y recursos
+
+- [NestJS](https://docs.nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [Swagger](https://swagger.io/)
+- [Docker](https://docs.docker.com/)
+- [JWT.io](https://jwt.io/)
+- [Guía de seguridad Node.js](https://nodejs.org/en/docs/guides/security/)
+- [Sentry](https://sentry.io/welcome/)
 
 ---
