@@ -17,6 +17,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Pruebas unitarias y de integración con base de datos en memoria.
 - **Módulo Docker desacoplado y seguro**: validación de comandos, logger centralizado, integración con ambientes.
 - **Pruebas de integración robustas**: cubren flujos completos de clientes, ambientes y operaciones Docker.
+- **Documentación Swagger modularizada**: la documentación de los endpoints está separada en archivos externos para facilitar el mantenimiento y la extensión.
 
 ---
 
@@ -24,7 +25,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 
 - **NestJS** (backend modular)
 - **SQLite + TypeORM** (persistencia)
-- **Swagger** (documentación interactiva)
+- **Swagger** (documentación interactiva y modular)
 - **Winston** (logs centralizados)
 - **Dotenv + @nestjs/config** (variables de entorno)
 - **Filtro global de errores** (manejo uniforme de excepciones)
@@ -73,6 +74,41 @@ Accede a la documentación interactiva en:
 [http://localhost:3000/api](http://localhost:3000/api)
 
 También puedes usar la colección Postman incluida: `Dockmin.postman_collection.json`
+
+### 📚 Documentación Swagger modularizada
+
+La documentación de los endpoints principales está separada en archivos externos para facilitar su mantenimiento y extensión:
+- `src/docker/docs/docker-swagger.docs.ts`
+- `src/ambientes/docs/ambientes-swagger.docs.ts`
+- `src/clientes/docs/clientes-swagger.docs.ts`
+
+Puedes consultar y extender estos archivos para agregar ejemplos, descripciones y esquemas personalizados a los endpoints.
+
+#### Ejemplo de respuesta enriquecida (endpoint Docker):
+
+```json
+{
+  "success": true,
+  "stdout": "Nombre   Estado   Puertos\nweb_1   running   80/tcp",
+  "stderr": "",
+  "parsed": [
+    { "Nombre": "web_1", "Estado": "running", "Puertos": "80/tcp" }
+  ]
+}
+```
+
+#### Ejemplo de error:
+
+```json
+{
+  "success": false,
+  "stdout": "",
+  "stderr": "",
+  "error": "Ruta de ambiente fuera del directorio permitido",
+  "errorType": "VALIDATION",
+  "parsed": []
+}
+```
 
 ---
 
@@ -177,9 +213,7 @@ También puedes usar la colección Postman incluida: `Dockmin.postman_collection
 ## 📦 Próximos pasos sugeridos
 
 - [ ] **Seguridad:** Autenticación JWT, autorización por roles, rate limiting, validación avanzada de entradas.
-- [ ] **Mejoras Docker:** Parseo estructurado de `docker compose ps`, endpoint de logs, validación avanzada de comandos y paths, soporte de perfiles/variables.
-- [ ] **Documentación:** Ejemplos de respuesta y error en Swagger, guía de despliegue, sección de troubleshooting y FAQ, ejemplos de uso en Postman.
-- [ ] Revisar y limpiar el código.
+
 - [ ] Implementar módulo central de auditoría.
 - [ ] Conectar un frontend para administración visual.
 

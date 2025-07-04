@@ -3,6 +3,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { DataSource } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 
 describe('Dockmin API (integración)', () => {
   let app: INestApplication;
@@ -20,6 +22,16 @@ describe('Dockmin API (integración)', () => {
     // Obtener el DataSource y sincronizar la base de datos
     dataSource = app.get(DataSource);
     await dataSource.synchronize(true);
+
+    // Crear carpetas necesarias para los tests de ambientes
+    const basePath = process.env.AMBIENTES_BASE_PATH || '/proyectos';
+    const ambientes = ['qa', 'qa-docker'];
+    for (const amb of ambientes) {
+      const dir = path.resolve(basePath, amb);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    }
   });
 
   afterAll(async () => {
@@ -46,7 +58,7 @@ describe('Dockmin API (integración)', () => {
       .send({
         clienteId,
         nombre: 'qa',
-        path: '/proyectos/demo/qa',
+        path: 'qa',
         comandoUp: 'docker compose up -d',
         comandoDown: 'docker compose down',
       })
@@ -101,7 +113,7 @@ describe('Dockmin API (integración)', () => {
       .send({
         clienteId: clienteDockerId,
         nombre: 'qa-docker',
-        path: '/proyectos/demo/qa-docker',
+        path: 'qa-docker',
         comandoUp: 'docker compose up -d',
         comandoDown: 'docker compose down',
         perfiles: [],

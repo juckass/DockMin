@@ -2,12 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DockerService } from './docker.service';
 import { LoggerService } from '../core/logger/logger.service';
 import { Ambiente } from '../ambientes/entities/ambiente.entity';
+import { ConfigService } from '@nestjs/config';
 
 const ambienteMock: Ambiente = {
   id: 1,
   clienteId: 1,
   nombre: 'Test',
-  path: '.',
+  path: 'proyecto1',
   comandoUp: 'docker compose up -d',
   comandoDown: 'docker compose down',
 };
@@ -16,10 +17,12 @@ describe('DockerService', () => {
   let service: DockerService;
   let logger: LoggerService;
   let execAsyncMock: jest.Mock;
+  let configService: ConfigService;
 
   beforeEach(() => {
     logger = { error: jest.fn(), log: jest.fn() } as any;
-    service = new DockerService(logger);
+    configService = { get: jest.fn((key) => key === 'AMBIENTES_BASE_PATH' ? '/base/dir' : undefined) } as any;
+    service = new DockerService(logger, configService);
     execAsyncMock = jest.fn();
     (service as any).execAsync = execAsyncMock;
   });
@@ -62,10 +65,18 @@ describe('DockerService', () => {
   });
 
   describe('runAmbienteCommand', () => {
-    it('debe devolver success true si el comando funciona', async () => {
+    it('debe devolver success true si el comando funciona y el path es válido', async () => {
       execAsyncMock.mockResolvedValue({ stdout: 'ok', stderr: '' });
       const result = await (service as any).runAmbienteCommand(ambienteMock, 'comandoUp');
       expect(result).toEqual({ success: true, stdout: 'ok', stderr: '' });
+    });
+    it('debe lanzar error si el path está fuera de la base', async () => {
+      const ambienteMalicioso = { ...ambienteMock, path: '../../etc' };
+      await expect((service as any).runAmbienteCommand(ambienteMalicioso, 'comandoUp')).resolves.toMatchObject({
+        success: false,
+        error: expect.stringContaining('directorio permitido'),
+      });
+      expect(logger.error).toHaveBeenCalled();
     });
     it('debe devolver success false y loguear si el comando falla', async () => {
       execAsyncMock.mockRejectedValue({ message: 'fail', stdout: '', stderr: 'err', stack: 'trace' });
@@ -90,6 +101,43 @@ describe('DockerService', () => {
     it('psAmbiente llama runAmbienteCommand con docker compose ps', async () => {
       await service.psAmbiente(ambienteMock);
       expect((service as any).runAmbienteCommand).toHaveBeenCalledWith(ambienteMock, 'docker compose ps');
+    });
+  });
+
+  describe('isCommandSafe', () => {
+    it('permite docker compose up -d', () => {
+      expect((service as any).isCommandSafe('docker compose up -d')).toBe(true);
+    });
+    it('permite docker compose down', () => {
+      expect((service as any).isCommandSafe('docker compose down')).toBe(true);
+    });
+    it('permite docker compose ps', () => {
+      expect((service as any).isCommandSafe('docker compose ps')).toBe(true);
+    });
+    it('rechaza comandos con ;', () => {
+      expect((service as any).isCommandSafe('docker compose up ; rm -rf /')).toBe(false);
+    });
+    it('rechaza comandos con &&', () => {
+      expect((service as any).isCommandSafe('docker compose up && echo hack')).toBe(false);
+    });
+    it('rechaza comandos con |', () => {
+      expect((service as any).isCommandSafe('docker compose up | cat')).toBe(false);
+    });
+    it('rechaza comandos con $', () => {
+      expect((service as any).isCommandSafe('docker compose up $HOME')).toBe(false);
+    });
+    it('rechaza comandos que no sean docker compose', () => {
+      expect((service as any).isCommandSafe('ls -la')).toBe(false);
+      expect((service as any).isCommandSafe('rm -rf /')).toBe(false);
+    });
+    it('rechaza docker run', () => {
+      expect((service as any).isCommandSafe('docker run -it bash')).toBe(false);
+    });
+    it('permite docker compose up --profile=nginx -d', () => {
+      expect((service as any).isCommandSafe('docker compose --profile=nginx up -d')).toBe(true);
+    });
+    it('rechaza docker compose up con backticks', () => {
+      expect((service as any).isCommandSafe('docker compose up `rm -rf /`')).toBe(false);
     });
   });
 });

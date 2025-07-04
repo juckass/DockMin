@@ -7,13 +7,30 @@ import { Repository, Like } from 'typeorm';
 import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
 
 describe('AmbientesService', () => {
   let service: AmbientesService;
   let ambienteRepository: jest.Mocked<Partial<Repository<Ambiente>>>;
   let clienteRepository: jest.Mocked<Partial<Repository<Cliente>>>;
+  let existsSyncSpy: jest.SpyInstance;
+  let statSyncSpy: jest.SpyInstance;
+  const BASE_PATH = '/base/ambientes';
 
   beforeEach(async () => {
+    existsSyncSpy = jest.spyOn(fs, 'existsSync');
+    statSyncSpy = jest.spyOn(fs, 'statSync');
+    jest.spyOn(path, 'resolve').mockImplementation((base: string, target?: string) => {
+      if (typeof target === 'undefined') return base;
+      // Simula path.resolve para pruebas de seguridad de path
+      if (target.startsWith('..')) return '/etc/passwd';
+      if (target.startsWith('/')) return target;
+      return base + (base.endsWith('/') ? '' : '/') + target;
+    });
+    process.env.AMBIENTES_BASE_PATH = BASE_PATH;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AmbientesService,
@@ -36,6 +53,15 @@ describe('AmbientesService', () => {
             findOneBy: jest.fn(),
           },
         },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'AMBIENTES_BASE_PATH') return BASE_PATH;
+              return undefined;
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -43,6 +69,12 @@ describe('AmbientesService', () => {
     ambienteRepository = module.get(getRepositoryToken(Ambiente));
     clienteRepository = module.get(getRepositoryToken(Cliente));
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    existsSyncSpy.mockRestore();
+    statSyncSpy.mockRestore();
+    jest.restoreAllMocks();
   });
 
   it('should be defined', () => {
@@ -53,18 +85,21 @@ describe('AmbientesService', () => {
     const dto: CreateAmbienteDto = {
       clienteId: 1,
       nombre: 'qa',
-      path: '/proyectos/demo/qa',
+      path: 'qa',
       comandoUp: 'docker compose up -d',
       comandoDown: 'docker compose down',
     };
-    const entity: Ambiente = { id: 1, ...dto };
+    // El servicio transforma el path a relativo a la base
+    const entity: Ambiente = { id: 1, ...dto, path: '/qa' };
     (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Demo', slug: 'demo' });
     (ambienteRepository.create as jest.Mock).mockReturnValue(entity);
     (ambienteRepository.save as jest.Mock).mockResolvedValue(entity);
+    existsSyncSpy.mockReturnValue(true);
+    statSyncSpy.mockReturnValue({ isDirectory: () => true } as any);
 
     const result = await service.create(dto);
     expect(clienteRepository.findOneBy).toHaveBeenCalledWith({ id: dto.clienteId });
-    expect(ambienteRepository.create).toHaveBeenCalledWith(dto);
+    expect(ambienteRepository.create).toHaveBeenCalledWith(dto); // path: 'qa'
     expect(ambienteRepository.save).toHaveBeenCalledWith(entity);
     expect(result).toEqual(entity);
   });
@@ -79,6 +114,47 @@ describe('AmbientesService', () => {
     };
     (clienteRepository.findOneBy as jest.Mock).mockResolvedValue(null);
 
+    await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException if path is outside base path', async () => {
+    const dto: CreateAmbienteDto = {
+      clienteId: 1,
+      nombre: 'qa',
+      path: '../../etc/passwd',
+      comandoUp: 'docker compose up -d',
+      comandoDown: 'docker compose down',
+    };
+    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Demo', slug: 'demo' });
+    existsSyncSpy.mockReturnValue(true);
+    statSyncSpy.mockReturnValue({ isDirectory: () => true } as any);
+    await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException if directory does not exist', async () => {
+    const dto: CreateAmbienteDto = {
+      clienteId: 1,
+      nombre: 'qa',
+      path: '/base/ambientes/qa',
+      comandoUp: 'docker compose up -d',
+      comandoDown: 'docker compose down',
+    };
+    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Demo', slug: 'demo' });
+    existsSyncSpy.mockReturnValue(false);
+    await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException if path exists but is not a directory', async () => {
+    const dto: CreateAmbienteDto = {
+      clienteId: 1,
+      nombre: 'qa',
+      path: '/base/ambientes/qa',
+      comandoUp: 'docker compose up -d',
+      comandoDown: 'docker compose down',
+    };
+    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 1, nombre: 'Demo', slug: 'demo' });
+    existsSyncSpy.mockReturnValue(true);
+    statSyncSpy.mockReturnValue({ isDirectory: () => false } as any);
     await expect(service.create(dto)).rejects.toThrow(BadRequestException);
   });
 

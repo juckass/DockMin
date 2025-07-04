@@ -4,6 +4,7 @@ import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
 import { ApiTags, ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ClientesService } from '../clientes/clientes.service';
+import { ambienteCreateBodyDoc, ambienteCreateResponseDoc, ambienteCreateErrorDoc, ambienteFindAllQueryDocs } from './docs/ambientes-swagger.docs';
 
 @ApiTags('Ambientes')
 @Controller('ambientes')
@@ -14,36 +15,18 @@ export class AmbientesController {
   ) {}
 
   @Post()
-  @ApiBody({
-    type: CreateAmbienteDto,
-    examples: {
-      ejemplo: {
-        summary: 'Ejemplo de creación de ambiente',
-        value: {
-          clienteId: 1,
-          nombre: 'qa',
-          path: '/proyectos/sura/qa',
-          prefijo: 'sura_qa',
-          comandoUp: 'docker compose --profile=nginx up -d',
-          comandoDown: 'docker compose down',
-          perfiles: ['nginx', 'php', 'mysql'],
-          autostart: true,
-          orden: 1
-        }
-      }
-    }
-  })
-  @ApiResponse({ status: 201, description: 'Ambiente creado exitosamente.' })
-  @ApiResponse({ status: 400, description: 'El cliente especificado no existe.' })
+  @ApiBody(ambienteCreateBodyDoc)
+  @ApiResponse(ambienteCreateResponseDoc)
+  @ApiResponse(ambienteCreateErrorDoc)
   create(@Body() createAmbienteDto: CreateAmbienteDto) {
     return this.ambientesService.create(createAmbienteDto);
   }
 
   @Get()
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Cantidad por página' })
-  @ApiQuery({ name: 'nombre', required: false, type: String, description: 'Filtrar por nombre' })
-  @ApiQuery({ name: 'clienteId', required: false, type: Number, description: 'Filtrar por clienteId' })
+  @ApiQuery(ambienteFindAllQueryDocs[0])
+  @ApiQuery(ambienteFindAllQueryDocs[1])
+  @ApiQuery(ambienteFindAllQueryDocs[2])
+  @ApiQuery(ambienteFindAllQueryDocs[3])
   findAll(
     @Query('page') page?: number,
     @Query('limit') limit?: number,

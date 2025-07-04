@@ -5,6 +5,9 @@ import { Ambiente } from './entities/ambiente.entity';
 import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
 import { Cliente } from '../clientes/entities/cliente.entity';
+import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 
 @Injectable()
 export class AmbientesService {
@@ -13,6 +16,7 @@ export class AmbientesService {
     private readonly ambienteRepository: Repository<Ambiente>,
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createAmbienteDto: CreateAmbienteDto) {
@@ -20,7 +24,16 @@ export class AmbientesService {
     if (!cliente) {
       throw new BadRequestException('El cliente especificado no existe');
     }
-    const ambiente = this.ambienteRepository.create(createAmbienteDto);
+    // Validar que el path sea relativo y seguro respecto a AMBIENTES_BASE_PATH
+    const basePath = this.configService.get<string>('AMBIENTES_BASE_PATH') || '';
+    const ambientePath = path.resolve(basePath, createAmbienteDto.path.replace(basePath, ''));
+    if (!ambientePath.startsWith(path.resolve(basePath))) {
+      throw new BadRequestException('El path del ambiente debe estar dentro del directorio base permitido.');
+    }
+    if (!fs.existsSync(ambientePath) || !fs.statSync(ambientePath).isDirectory()) {
+      throw new BadRequestException('El path del ambiente no existe o no es un directorio.');
+    }
+    const ambiente = this.ambienteRepository.create({ ...createAmbienteDto, path: createAmbienteDto.path.replace(basePath, '') });
     return this.ambienteRepository.save(ambiente);
   }
 
@@ -56,6 +69,17 @@ export class AmbientesService {
   }
 
   async update(id: number, updateAmbienteDto: UpdateAmbienteDto) {
+    if (updateAmbienteDto.path) {
+      const basePath = this.configService.get<string>('AMBIENTES_BASE_PATH') || '';
+      const ambientePath = path.resolve(basePath, updateAmbienteDto.path.replace(basePath, ''));
+      if (!ambientePath.startsWith(path.resolve(basePath))) {
+        throw new BadRequestException('El path del ambiente debe estar dentro del directorio base permitido.');
+      }
+      if (!fs.existsSync(ambientePath) || !fs.statSync(ambientePath).isDirectory()) {
+        throw new BadRequestException('El path del ambiente no existe o no es un directorio.');
+      }
+      updateAmbienteDto.path = updateAmbienteDto.path.replace(basePath, '');
+    }
     const result = await this.ambienteRepository.update(id, updateAmbienteDto);
     if (result.affected === 0) {
       throw new NotFoundException('No se pudo actualizar: ambiente no encontrado');

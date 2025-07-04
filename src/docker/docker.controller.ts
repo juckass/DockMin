@@ -1,9 +1,12 @@
 import { Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { DockerService } from './docker.service';
 import { AmbientesService } from '../ambientes/ambientes.service';
+import { DockerCommandResultDto } from './dto/docker-command-result.dto';
+import { dockerUpResponseDoc, dockerDownResponseDoc, dockerPsResponseDoc } from './docs/docker-swagger.docs';
 
 @ApiTags('Docker')
+@ApiExtraModels(DockerCommandResultDto)
 @Controller('docker')
 export class DockerController {
     constructor(
@@ -47,13 +50,8 @@ export class DockerController {
     @Post('up/:id')
     @ApiOperation({ summary: 'Levantar ambiente', description: 'Ejecuta el comando de subida (up) para el ambiente especificado.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
-    @ApiResponse({ status: 200, description: 'Resultado de la ejecución', schema: { example: {
-        success: true,
-        stdout: 'Salida estándar del comando',
-        stderr: '',
-        error: null
-    }}})
-    async upAmbiente(@Param('id') id: number) {
+    @ApiResponse(dockerUpResponseDoc)
+    async upAmbiente(@Param('id') id: number): Promise<DockerCommandResultDto & { parsed: any }> {
         const ambiente = await this.ambientesService.findOne(id);
         if (!ambiente) throw new NotFoundException('Ambiente no encontrado');
         return this.dockerService.upAmbiente(ambiente);
@@ -66,13 +64,8 @@ export class DockerController {
     @Post('down/:id')
     @ApiOperation({ summary: 'Bajar ambiente', description: 'Ejecuta el comando de bajada (down) para el ambiente especificado.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
-    @ApiResponse({ status: 200, description: 'Resultado de la ejecución', schema: { example: {
-        success: true,
-        stdout: 'Salida estándar del comando',
-        stderr: '',
-        error: null
-    }}})
-    async downAmbiente(@Param('id') id: number) {
+    @ApiResponse(dockerDownResponseDoc)
+    async downAmbiente(@Param('id') id: number): Promise<DockerCommandResultDto & { parsed: any }> {
         const ambiente = await this.ambientesService.findOne(id);
         if (!ambiente) throw new NotFoundException('Ambiente no encontrado');
         return this.dockerService.downAmbiente(ambiente);
@@ -85,13 +78,8 @@ export class DockerController {
     @Post('ps/:id')
     @ApiOperation({ summary: 'Estado de contenedores', description: 'Muestra el estado de los contenedores del ambiente usando docker compose ps.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
-    @ApiResponse({ status: 200, description: 'Resultado de la ejecución', schema: { example: {
-        success: true,
-        stdout: 'Nombre   Estado   Puertos\nweb_1   running   80/tcp',
-        stderr: '',
-        error: null
-    }}})
-    async psAmbiente(@Param('id') id: number) {
+    @ApiResponse(dockerPsResponseDoc)
+    async psAmbiente(@Param('id') id: number): Promise<DockerCommandResultDto & { parsed: any }> {
         const ambiente = await this.ambientesService.findOne(id);
         if (!ambiente) throw new NotFoundException('Ambiente no encontrado');
         return this.dockerService.psAmbiente(ambiente);

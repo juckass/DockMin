@@ -4,6 +4,7 @@ import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Like } from 'typeorm';
+import { clienteCreateBodyDoc, clienteCreateResponseDoc, clienteFindAllQueryDocs, clienteFindOneResponseDoc, clienteFindOneErrorDoc, clienteUpdateBodyDoc, clienteUpdateResponseDoc, clienteUpdateErrorDoc } from './docs/clientes-swagger.docs';
 
 @ApiTags('Clientes')
 @Controller('clientes')
@@ -11,25 +12,17 @@ export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
   @Post()
-  @ApiBody({
-    type: CreateClienteDto,
-    examples: {
-      ejemplo: {
-        summary: 'Ejemplo de creación de cliente',
-        value: { nombre: 'Empresa Sura', slug: 'sura' }
-      }
-    }
-  })
-  @ApiResponse({ status: 201, description: 'Cliente creado exitosamente.' })
+  @ApiBody(clienteCreateBodyDoc)
+  @ApiResponse(clienteCreateResponseDoc)
   create(@Body() createClienteDto: CreateClienteDto) {
     return this.clientesService.create(createClienteDto);
   }
 
   @Get()
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Cantidad por página' })
-  @ApiQuery({ name: 'nombre', required: false, type: String, description: 'Filtrar por nombre' })
-  @ApiQuery({ name: 'slug', required: false, type: String, description: 'Filtrar por slug' })
+  @ApiQuery(clienteFindAllQueryDocs[0])
+  @ApiQuery(clienteFindAllQueryDocs[1])
+  @ApiQuery(clienteFindAllQueryDocs[2])
+  @ApiQuery(clienteFindAllQueryDocs[3])
   findAll(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
@@ -45,16 +38,16 @@ export class ClientesController {
   }
 
   @Get(':id')
-  @ApiResponse({ status: 200, description: 'Cliente encontrado.' })
-  @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
+  @ApiResponse(clienteFindOneResponseDoc)
+  @ApiResponse(clienteFindOneErrorDoc)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clientesService.findOne(id);
   }
 
   @Put(':id')
-  @ApiBody({ type: UpdateClienteDto })
-  @ApiResponse({ status: 200, description: 'Cliente actualizado.' })
-  @ApiResponse({ status: 404, description: 'No se pudo actualizar: cliente no encontrado.' })
+  @ApiBody(clienteUpdateBodyDoc)
+  @ApiResponse(clienteUpdateResponseDoc)
+  @ApiResponse(clienteUpdateErrorDoc)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateClienteDto: UpdateClienteDto,
