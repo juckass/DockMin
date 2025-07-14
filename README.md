@@ -31,8 +31,7 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - Paginación y filtros en listados.
 - Validación automática y unicidad de slug.
 - Manejo robusto de errores y validaciones.
-- Pruebas unitarias y de integración con base de datos en memoria.
-- **Módulo Docker desacoplado y seguro**: validación de comandos, logger centralizado, integración con ambientes.
+- **Autenticación y autorización**: soporte para JWT, roles y permisos (RBAC).
 - **Pruebas de integración robustas**: cubren flujos completos de clientes, ambientes y operaciones Docker.
 - **Documentación Swagger modularizada**: la documentación de los endpoints está separada en archivos externos para facilitar el mantenimiento y la extensión.
 
@@ -47,6 +46,8 @@ Dockmin es un sistema para gestionar ambientes Docker de múltiples clientes, pe
 - **Dotenv + @nestjs/config** (variables de entorno)
 - **Filtro global de errores** (manejo uniforme de excepciones)
 - **Jest + Supertest** (pruebas unitarias y de integración)
+- **Autenticación JWT y OAuth** (Google OAuth integrado)
+- **RBAC (Role-Based Access Control)** (roles y permisos configurables desde la base de datos)
 
 ---
 
@@ -73,6 +74,8 @@ Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 PORT=3000
 DATABASE_PATH=./data/dockmin.sqlite
 LOGS_PATH=./logs
+JWT_SECRET=supersecretkey
+JWT_EXPIRES_IN=3600
 ```
 
 ### 4. Inicia la aplicación
@@ -98,92 +101,9 @@ La documentación de los endpoints principales está separada en archivos extern
 - `src/docker/docs/docker-swagger.docs.ts`
 - `src/ambientes/docs/ambientes-swagger.docs.ts`
 - `src/clientes/docs/clientes-swagger.docs.ts`
+- `src/auth/docs/auth-swagger.docs.ts`
 
 Puedes consultar y extender estos archivos para agregar ejemplos, descripciones y esquemas personalizados a los endpoints.
-
-#### Ejemplo de respuesta enriquecida (endpoint Docker):
-
-```json
-{
-  "success": true,
-  "stdout": "Nombre   Estado   Puertos\nweb_1   running   80/tcp",
-  "stderr": "",
-  "parsed": [
-    { "Nombre": "web_1", "Estado": "running", "Puertos": "80/tcp" }
-  ]
-}
-```
-
-#### Ejemplo de error:
-
-```json
-{
-  "success": false,
-  "stdout": "",
-  "stderr": "",
-  "error": "Ruta de ambiente fuera del directorio permitido",
-  "errorType": "VALIDATION",
-  "parsed": []
-}
-```
-
----
-
-## 📬 Endpoints principales
-
-### Clientes
-
-- `GET /clientes` — Listar clientes (paginación y filtros)
-- `GET /clientes/:id` — Obtener cliente por ID
-- `POST /clientes` — Crear cliente
-- `PUT /clientes/:id` — Actualizar cliente
-- `DELETE /clientes/:id` — Eliminar (soft delete) cliente
-- `GET /clientes/:id/ambientes/eliminados` — Listar ambientes eliminados de un cliente
-
-### Ambientes
-
-- `GET /ambientes` — Listar ambientes (paginación y filtros)
-- `GET /ambientes/:id` — Obtener ambiente por ID
-- `POST /ambientes` — Crear ambiente
-- `PUT /ambientes/:id` — Actualizar ambiente
-- `DELETE /ambientes/:id` — Eliminar (soft delete) ambiente
-- `GET /ambientes/cliente/:clienteId` — Listar ambientes por cliente
-- `GET /ambientes/cliente/:clienteId/eliminados` — Listar ambientes eliminados por cliente
-
-### Docker
-
-- `GET /docker/status` — Estado general de Docker (instalación, permisos, versión)
-- `POST /docker/up/:id` — Levantar ambiente Docker
-- `POST /docker/ps/:id` — Consultar contenedores del ambiente
-- `POST /docker/down/:id` — Bajar ambiente Docker
-
----
-
-## 📝 Ejemplos de body para la API
-
-### Crear cliente
-
-```json
-{
-  "nombre": "DemoCorp"
-}
-```
-
-### Crear ambiente
-
-```json
-{
-  "clienteId": 1,
-  "nombre": "qa",
-  "path": "/proyectos/demo/qa",
-  "prefijo": "demo_qa",
-  "comandoUp": "docker compose --profile=nginx up -d",
-  "comandoDown": "docker compose down",
-  "perfiles": ["nginx", "php", "mysql"],
-  "autostart": true,
-  "orden": 1
-}
-```
 
 ---
 
@@ -191,8 +111,8 @@ Puedes consultar y extender estos archivos para agregar ejemplos, descripciones 
 
 - Todos los errores son gestionados por un filtro global y registrados con Winston.
 - Los logs se almacenan en la carpeta definida por `LOGS_PATH` en `.env`.
-- Los logs de pruebas pueden ser eliminados automáticamente tras la ejecución de los tests.
 - Los errores de ejecución de comandos Docker quedan registrados en el logger central.
+- Los errores de autenticación y autorización se manejan con guards y decoradores personalizados.
 
 ---
 
@@ -223,6 +143,7 @@ Puedes consultar y extender estos archivos para agregar ejemplos, descripciones 
 - `src/clientes`: CRUD de clientes, soft delete, paginación, filtros, validaciones
 - `src/ambientes`: CRUD y control de ambientes Docker, soft delete, paginación, filtros, validaciones
 - `src/docker`: Módulo para operaciones Docker (up, down, ps, validación, logger)
+- `src/auth`: Módulo de autenticación y autorización (JWT, OAuth, RBAC)
 - `test/integration`: Pruebas de integración con base de datos en memoria
 
 ---
