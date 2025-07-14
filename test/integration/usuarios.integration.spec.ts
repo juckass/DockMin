@@ -2,16 +2,31 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { getRepository } from 'typeorm';
-import { Usuario } from '../../src/usuarios/entities/usuario/usuario';
+import { DataSource } from 'typeorm';
+import { Usuario } from '../../src/usuarios/entities/usuario.entity';
 
 describe('Usuarios Módulo (Integración)', () => {
   let app: INestApplication;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
+    dataSource = new DataSource({
+      type: 'sqlite',
+      database: ':memory:',
+      entities: [Usuario],
+      synchronize: true,
+      dropSchema: true,
+    });
+    await dataSource.initialize();
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+      imports: [
+        AppModule,
+      ],
+    })
+      .overrideProvider(DataSource)
+      .useValue(dataSource)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -22,7 +37,7 @@ describe('Usuarios Módulo (Integración)', () => {
   });
 
   beforeEach(async () => {
-    const usuarioRepository = getRepository(Usuario);
+    const usuarioRepository = dataSource.getRepository(Usuario);
     await usuarioRepository.clear();
 
     const usuario = {
@@ -36,7 +51,8 @@ describe('Usuarios Módulo (Integración)', () => {
       .send(usuario)
       .expect(201);
 
-    expect(response.body).toHaveProperty('id', 1);
+    expect(response.body).toHaveProperty('id');
+    expect(typeof response.body.id).toBe('number');
   });
 
   it('debería crear un usuario', async () => {
@@ -67,32 +83,85 @@ describe('Usuarios Módulo (Integración)', () => {
   });
 
   it('debería obtener un usuario por ID', async () => {
+    // Crear un usuario primero
+    const usuario = {
+      correo: 'obtenerid@example.com',
+      nombreCompleto: 'Obtener ID User',
+      contraseña: 'password123',
+    };
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/usuarios')
+      .send(usuario)
+      .expect(201);
+
+    const userId = createResponse.body.id;
+
     const response = await request(app.getHttpServer())
-      .get('/usuarios/1')
+      .get(`/usuarios/${userId}`)
       .expect(200);
 
     expect(response.body).toHaveProperty('correo');
     expect(response.body).toHaveProperty('nombreCompleto');
+    expect(response.body.correo).toBe(usuario.correo);
+    expect(response.body.nombreCompleto).toBe(usuario.nombreCompleto);
   });
 
   it('debería actualizar un usuario', async () => {
+    // Crear un usuario primero
+    const usuario = {
+      correo: 'updateuser@example.com',
+      nombreCompleto: 'User To Update',
+      contraseña: 'password123',
+    };
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/usuarios')
+      .send(usuario)
+      .expect(201);
+
+    const userId = createResponse.body.id;
+
     const updateData = {
       nombreCompleto: 'Updated User',
     };
 
     const response = await request(app.getHttpServer())
-      .patch('/usuarios/1')
+      .patch(`/usuarios/${userId}`)
       .send(updateData)
       .expect(200);
 
     expect(response.body).toMatchObject(updateData);
   });
 
-  it('debería eliminar un usuario', async () => {
+  it('debería eliminar un usuario y devolver el usuario eliminado', async () => {
+    // Crear un usuario primero
+    const usuario = {
+      correo: 'deleteuser@example.com',
+      nombreCompleto: 'User To Delete',
+      contraseña: 'password123',
+    };
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/usuarios')
+      .send(usuario)
+      .expect(201);
+
+    const userId = createResponse.body.id;
+
     const response = await request(app.getHttpServer())
-      .delete('/usuarios/1')
+      .delete(`/usuarios/${userId}`)
       .expect(200);
 
-    expect(response.body).toEqual({ message: 'Usuario eliminado correctamente' });
+    expect(response.body).toEqual({
+      message: 'Usuario eliminado correctamente',
+      usuario: {
+        id: userId,
+        correo: usuario.correo,
+        nombreCompleto: usuario.nombreCompleto,
+        rol: 'user',
+        deletedAt: expect.any(String),
+      },
+    });
   });
 });

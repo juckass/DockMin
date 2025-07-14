@@ -10,6 +10,7 @@ const mockUsuariosService = {
   findOne: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
+  restore: jest.fn(),
 };
 
 describe('UsuariosController', () => {
@@ -101,12 +102,24 @@ describe('UsuariosController', () => {
   describe('remove', () => {
     it('should call UsuariosService.remove with correct parameters', async () => {
       const id = 1;
-      mockUsuariosService.remove.mockResolvedValue({ message: 'Usuario eliminado correctamente' });
+      mockUsuariosService.remove.mockResolvedValue({ id, correo: 'test@example.com', nombreCompleto: 'Deleted User' });
 
       const result = await controller.remove(id);
 
       expect(mockUsuariosService.remove).toHaveBeenCalledWith(id);
-      expect(result).toEqual({ message: 'Usuario eliminado correctamente' });
+      expect(result).toEqual({ message: 'Usuario eliminado correctamente', usuario: { id, correo: 'test@example.com', nombreCompleto: 'Deleted User' } });
+    });
+  });
+
+  describe('restore', () => {
+    it('should call UsuariosService.restore with correct parameters', async () => {
+      const id = 1;
+      mockUsuariosService.restore = jest.fn().mockResolvedValue({ id, correo: 'test@example.com', nombreCompleto: 'Restored User' });
+
+      const result = await controller.restore(id);
+
+      expect(mockUsuariosService.restore).toHaveBeenCalledWith(id);
+      expect(result).toEqual({ id, correo: 'test@example.com', nombreCompleto: 'Restored User' });
     });
   });
 });

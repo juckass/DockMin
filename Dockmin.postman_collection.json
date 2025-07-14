@@ -242,6 +242,30 @@
             "header": [],
             "url": { "raw": "{{baseUrl}}/usuarios/1", "host": ["{{baseUrl}}"], "path": ["usuarios", "1"] }
           }
+        },
+        {
+          "name": "Listar usuarios eliminados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/eliminados",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "eliminados"]
+            }
+          }
+        },
+        {
+          "name": "Restaurar usuario eliminado",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1/restaurar",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1", "restaurar"]
+            }
+          }
         }
       ]
     }

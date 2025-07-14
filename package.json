@@ -93,7 +93,8 @@
       "!src/clientes/clientes.module.ts",
       "!src/ambientes/ambientes.module.ts",
       "!src/usuarios/usuarios.module.ts",
-      "!src/docker/docker.module.ts"
+      "!src/docker/docker.module.ts",
+      "!src/swagger.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"

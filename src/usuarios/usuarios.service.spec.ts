@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsuariosService } from './usuarios.service';
 import * as bcrypt from 'bcrypt';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Usuario } from './entities/usuario/usuario';
+import { Usuario } from './entities/usuario.entity';
 
 const mockUsuarioRepository = {
   findOneBy: jest.fn(),
@@ -44,7 +44,7 @@ describe('UsuariosService', () => {
 
       mockUsuarioRepository.findOneBy.mockResolvedValue(null);
       mockUsuarioRepository.create.mockImplementation((usuario) => usuario);
-      mockUsuarioRepository.save.mockImplementation(async (usuario) => ({ id: 1, ...usuario }));
+      mockUsuarioRepository.save.mockImplementation(async (usuario) => ({ id: 1, ...usuario, contraseña: undefined }));
 
       const result = await service.create(createUsuarioDto);
 
@@ -59,8 +59,8 @@ describe('UsuariosService', () => {
       });
       expect(result).toEqual({
         id: 1,
-        ...createUsuarioDto,
-        contraseña: expect.any(String),
+        correo: createUsuarioDto.correo,
+        nombreCompleto: createUsuarioDto.nombreCompleto,
       });
     });
 

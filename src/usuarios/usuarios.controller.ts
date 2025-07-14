@@ -24,6 +24,13 @@ export class UsuariosController {
     return this.usuariosService.findAll(query);
   }
 
+  @Get('eliminados')
+  @ApiOperation({ summary: 'Obtener todos los usuarios eliminados con paginación' })
+  @ApiResponse({ status: 200, description: 'Lista de usuarios eliminados.' })
+  async findDeleted(@Query() query: { page?: number; limit?: number }) {
+    return this.usuariosService.findDeleted(query);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un usuario por ID' })
   @ApiResponse(usuarioFindOneResponseDoc)
@@ -54,14 +61,23 @@ export class UsuariosController {
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   async remove(@Param('id') id: number) {
     try {
-      const usuario = await this.usuariosService.findOne(id);
-      if (!usuario) {
-        return { statusCode: 404, message: 'Usuario no encontrado.' };
-      }
-      await this.usuariosService.remove(id);
-      return { message: 'Usuario eliminado correctamente' };
+      const usuario = await this.usuariosService.remove(id);
+      return { message: 'Usuario eliminado correctamente', usuario };
     } catch (error) {
       return { statusCode: 500, message: 'Error interno del servidor', error: error.message };
+    }
+  }
+
+  @Patch(':id/restaurar')
+  @ApiOperation({ summary: 'Restaurar un usuario eliminado por ID' })
+  @ApiResponse({ status: 200, description: 'Usuario restaurado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado o no está eliminado.' })
+  async restore(@Param('id') id: number) {
+    try {
+      const usuario = await this.usuariosService.restore(id);
+      return usuario;
+    } catch (error) {
+      return { statusCode: 404, message: error.message };
     }
   }
 }
