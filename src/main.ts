@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
 import { AllExceptionsFilter } from './core/filters/all-exceptions/all-exceptions.filter';
 import { LoggerService } from './core/logger/logger.service';
+import { setupSwagger } from './swagger';
 
 
 async function bootstrap() {
@@ -21,18 +21,7 @@ async function bootstrap() {
     }));
 
 
-  if (node_env !== 'production') {
-    const config = new DocumentBuilder()
-      .setTitle('Dockmin API')
-      .setDescription('Documentación de la API de Dockmin')
-      .setVersion('1.0')
-      .addTag('Clientes')
-      .addTag('Ambientes')
-      .addTag('Docker')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
-  }
+  setupSwagger(app);
   // Inyecta el logger y registra el filtro global
   const logger = app.get(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(logger));

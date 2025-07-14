@@ -5,6 +5,8 @@ import { CoreModule } from './core/core.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { AmbientesModule } from './ambientes/ambientes.module';
 import { DockerModule } from './docker/docker.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,8 +30,9 @@ import { DockerModule } from './docker/docker.module';
     ClientesModule,
     AmbientesModule,
     DockerModule,
+    UsuariosModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
