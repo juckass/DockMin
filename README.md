@@ -269,3 +269,20 @@ Puedes consultar y extender estos archivos para agregar ejemplos, descripciones 
 - [Sentry](https://sentry.io/welcome/)
 
 ---
+
+## 🤖 Integración con Slack (AmbientesBot)
+
+Dockmin puede integrarse con un canal de Slack (por ejemplo, `#AmbientesBot`) para controlar ambientes Docker mediante comandos sencillos desde Slack:
+
+- Escribe la URL del ambiente (ejemplo: `qa-siena.docker.ilogica.cl` o `https://qa-siena.docker.ilogica.cl/`) en el canal.
+- Slack se comunica con el endpoint `/slack/operacion` del backend Dockmin (nombre sugerido: `OperacionSlack`).
+- El flujo es:
+  1. Si el sitio no está registrado, responde: "Sitio no registrado, favor comunicarse con soporte" y muestra un instructivo general.
+  2. Si existe, verifica el estado:
+     - Si está arriba, responde con el status y el estado de los contenedores.
+     - Si los contenedores no están andando, muestra un mensaje de advertencia.
+  3. Para levantar un sitio: escribe la URL seguida de `up` (ejemplo: `qa-siena.docker.ilogica.cl up`).
+  4. Para detenerlo: la URL seguida de `down`.
+  5. Para resetearlo: la URL seguida de `reset`.
+
+Esta integración permite operar ambientes desde Slack de forma segura, rápida y con feedback inmediato para los equipos.
