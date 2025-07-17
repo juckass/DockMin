@@ -15,8 +15,11 @@ export class Usuario {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  roleId: number;
+
   @ManyToOne(() => Role, { eager: true })
-  rol: Role;
+  role: Role;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;

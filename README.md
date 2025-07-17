@@ -286,3 +286,16 @@ Dockmin puede integrarse con un canal de Slack (por ejemplo, `#AmbientesBot`) pa
   5. Para resetearlo: la URL seguida de `reset`.
 
 Esta integración permite operar ambientes desde Slack de forma segura, rápida y con feedback inmediato para los equipos.
+
+---
+
+## 🛡️ Autenticación y autorización (JWT + RBAC)
+
+- Dockmin implementa autenticación JWT y control de acceso basado en roles y permisos (RBAC).
+- Los usuarios tienen un rol asignado (`user`, `admin`, etc.) y los roles pueden tener múltiples permisos configurables desde la base de datos.
+- El sistema incluye un seeder automático que crea los roles `admin` y `user` si no existen, y también crea el usuario admin con el rol correspondiente si no existe.
+- La relación entre usuario y rol está correctamente configurada y visible en las respuestas de la API.
+- Los endpoints CRUD para roles y permisos están disponibles y documentados en Postman.
+- Los guards y decoradores permiten proteger endpoints según roles y permisos definidos en la base de datos.
+- Puedes agregar nuevos roles y permisos sin modificar el código, solo actualizando la base de datos.
+- El login soporta usuario/contraseña y Google OAuth, y es extensible a otras redes sociales.

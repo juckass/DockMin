@@ -24,4 +24,10 @@ export class CreateUsuarioDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  @ApiProperty({
+    example: 1,
+    description: 'ID del rol asignado al usuario',
+  })
+  readonly roleId?: number;
 }

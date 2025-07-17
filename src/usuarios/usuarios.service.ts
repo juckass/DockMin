@@ -38,6 +38,7 @@ export class UsuariosService {
     const [data, total] = await this.usuarioRepository.findAndCount({
       skip,
       take: limit,
+      relations: ['role'],
     });
 
     const sanitizedData = data.map(({ password, ...usuarioSinpassword }) => usuarioSinpassword);
@@ -51,7 +52,10 @@ export class UsuariosService {
   }
 
   async findOne(id: number): Promise<Omit<Usuario, 'password'> | null> {
-    const usuario = await this.usuarioRepository.findOneBy({ id });
+    const usuario = await this.usuarioRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
     if (!usuario) {
       return null;
     }
