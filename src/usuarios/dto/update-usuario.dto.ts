@@ -21,10 +21,10 @@ export class UpdateUsuarioDto {
 
   @ApiProperty({
     example: 'newpassword123',
-    description: 'Nueva contraseña del usuario (mínimo 6 caracteres)',
+    description: 'Nueva password del usuario (mínimo 6 caracteres)',
     required: false,
   })
   @IsOptional()
   @MinLength(6)
-  contraseña?: string;
+  password?: string;
 }

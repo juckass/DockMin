@@ -19,9 +19,9 @@ export class CreateUsuarioDto {
 
   @ApiProperty({
     example: 'password123',
-    description: 'Contraseña del usuario (mínimo 6 caracteres)',
+    description: 'password del usuario (mínimo 6 caracteres)',
   })
   @IsNotEmpty()
   @MinLength(6)
-  contraseña: string;
+  password: string;
 }

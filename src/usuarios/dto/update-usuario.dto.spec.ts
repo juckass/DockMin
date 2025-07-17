@@ -6,7 +6,7 @@ describe('UpdateUsuarioDto', () => {
     const dto = new UpdateUsuarioDto();
     dto.correo = 'updated@example.com';
     dto.nombreCompleto = 'Updated User';
-    dto.contraseña = 'newpassword123';
+    dto.password = 'newpassword123';
 
     const errors = await validate(dto);
     expect(errors.length).toBe(0);

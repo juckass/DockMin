@@ -202,7 +202,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"correo\": \"usuario@example.com\",\n  \"nombreCompleto\": \"Usuario Ejemplo\",\n  \"contraseña\": \"password123\"\n}"
+              "raw": "{\n  \"correo\": \"usuario@example.com\",\n  \"nombreCompleto\": \"Usuario Ejemplo\",\n  \"password\": \"password123\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/usuarios", "host": ["{{baseUrl}}"], "path": ["usuarios"] }
           }
@@ -230,7 +230,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombreCompleto\": \"Usuario Actualizado\",\n  \"contraseña\": \"newpassword123\"\n}"
+              "raw": "{\n  \"nombreCompleto\": \"Usuario Actualizado\",\n  \"password\": \"newpassword123\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/usuarios/1", "host": ["{{baseUrl}}"], "path": ["usuarios", "1"] }
           }

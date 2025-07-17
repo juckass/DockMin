@@ -35,27 +35,27 @@ describe('UsuariosService', () => {
   });
 
   describe('create', () => {
-    it('debería crear un usuario con contraseña hasheada', async () => {
+    it('debería crear un usuario con password hasheada', async () => {
       const createUsuarioDto = {
         correo: 'test@example.com',
         nombreCompleto: 'Test User',
-        contraseña: 'password123',
+        password: 'password123',
       };
 
       mockUsuarioRepository.findOneBy.mockResolvedValue(null);
       mockUsuarioRepository.create.mockImplementation((usuario) => usuario);
-      mockUsuarioRepository.save.mockImplementation(async (usuario) => ({ id: 1, ...usuario, contraseña: undefined }));
+      mockUsuarioRepository.save.mockImplementation(async (usuario) => ({ id: 1, ...usuario, password: undefined }));
 
       const result = await service.create(createUsuarioDto);
 
       expect(mockUsuarioRepository.findOneBy).toHaveBeenCalledWith({ correo: createUsuarioDto.correo });
       expect(mockUsuarioRepository.create).toHaveBeenCalledWith({
         ...createUsuarioDto,
-        contraseña: expect.any(String),
+        password: expect.any(String),
       });
       expect(mockUsuarioRepository.save).toHaveBeenCalledWith({
         ...createUsuarioDto,
-        contraseña: expect.any(String),
+        password: expect.any(String),
       });
       expect(result).toEqual({
         id: 1,
@@ -68,7 +68,7 @@ describe('UsuariosService', () => {
       const createUsuarioDto = {
         correo: 'test@example.com',
         nombreCompleto: 'Test User',
-        contraseña: 'password123',
+        password: 'password123',
       };
 
       mockUsuarioRepository.findOneBy.mockResolvedValue({ id: 1, ...createUsuarioDto });

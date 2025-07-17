@@ -13,24 +13,24 @@ export class UsuariosService {
     private readonly usuarioRepository: Repository<Usuario>,
   ) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<Omit<Usuario, 'contraseña'>> {
+  async create(createUsuarioDto: CreateUsuarioDto): Promise<Omit<Usuario, 'password'>> {
     const existingUsuario = await this.usuarioRepository.findOneBy({ correo: createUsuarioDto.correo });
     if (existingUsuario) {
       throw new Error('El correo ya está registrado');
     }
 
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(createUsuarioDto.contraseña, salt);
+    const hashedPassword = await bcrypt.hash(createUsuarioDto.password, salt);
     const usuario = this.usuarioRepository.create({
       ...createUsuarioDto,
-      contraseña: hashedPassword,
+      password: hashedPassword,
     });
     const savedUsuario = await this.usuarioRepository.save(usuario);
-    const { contraseña, ...usuarioSinContraseña } = savedUsuario;
-    return usuarioSinContraseña;
+    const { password, ...usuarioSinpassword } = savedUsuario;
+    return usuarioSinpassword;
   }
 
-  async findAll(query: { page?: number; limit?: number }): Promise<{ data: Omit<Usuario, 'contraseña'>[]; total: number; page: number; lastPage: number }> {
+  async findAll(query: { page?: number; limit?: number }): Promise<{ data: Omit<Usuario, 'password'>[]; total: number; page: number; lastPage: number }> {
     const page = query.page && query.page > 0 ? query.page : 1;
     const limit = query.limit && query.limit > 0 ? query.limit : 10;
     const skip = (page - 1) * limit;
@@ -40,7 +40,7 @@ export class UsuariosService {
       take: limit,
     });
 
-    const sanitizedData = data.map(({ contraseña, ...usuarioSinContraseña }) => usuarioSinContraseña);
+    const sanitizedData = data.map(({ password, ...usuarioSinpassword }) => usuarioSinpassword);
 
     return {
       data: sanitizedData,
@@ -50,16 +50,16 @@ export class UsuariosService {
     };
   }
 
-  async findOne(id: number): Promise<Omit<Usuario, 'contraseña'> | null> {
+  async findOne(id: number): Promise<Omit<Usuario, 'password'> | null> {
     const usuario = await this.usuarioRepository.findOneBy({ id });
     if (!usuario) {
       return null;
     }
-    const { contraseña, ...usuarioSinContraseña } = usuario;
-    return usuarioSinContraseña;
+    const { password, ...usuarioSinpassword } = usuario;
+    return usuarioSinpassword;
   }
 
-  async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Omit<Usuario, 'contraseña'> | null> {
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Omit<Usuario, 'password'> | null> {
     const usuario = await this.usuarioRepository.findOneBy({ id });
     if (!usuario) {
       return null; // Manejo del caso en que el usuario no exista
@@ -72,9 +72,9 @@ export class UsuariosService {
       }
     }
 
-    if (updateUsuarioDto.contraseña) {
+    if (updateUsuarioDto.password) {
       const salt = await bcrypt.genSalt();
-      updateUsuarioDto.contraseña = await bcrypt.hash(updateUsuarioDto.contraseña, salt);
+      updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
     }
 
     await this.usuarioRepository.update(id, updateUsuarioDto);
@@ -82,21 +82,21 @@ export class UsuariosService {
     if (!updatedUsuario) {
       return null;
     }
-    const { contraseña, ...usuarioSinContraseña } = updatedUsuario;
-    return usuarioSinContraseña;
+    const { password, ...usuarioSinpassword } = updatedUsuario;
+    return usuarioSinpassword;
   }
 
-  async remove(id: number): Promise<Omit<Usuario, 'contraseña'> | null> {
+  async remove(id: number): Promise<Omit<Usuario, 'password'> | null> {
     const usuario = await this.usuarioRepository.findOneBy({ id });
     if (!usuario) {
       throw new Error('El usuario no existe');
     }
     await this.usuarioRepository.softRemove(usuario);
-    const { contraseña, ...usuarioSinContraseña } = usuario;
-    return usuarioSinContraseña;
+    const { password, ...usuarioSinpassword } = usuario;
+    return usuarioSinpassword;
   }
 
-  async findDeleted(query: { page?: number; limit?: number }): Promise<{ data: Omit<Usuario, 'contraseña'>[]; total: number; page: number; lastPage: number }> {
+  async findDeleted(query: { page?: number; limit?: number }): Promise<{ data: Omit<Usuario, 'password'>[]; total: number; page: number; lastPage: number }> {
     const page = query.page && query.page > 0 ? query.page : 1;
     const limit = query.limit && query.limit > 0 ? query.limit : 10;
     const skip = (page - 1) * limit;
@@ -110,7 +110,7 @@ export class UsuariosService {
 
     console.log('Usuarios eliminados:', data);
 
-    const sanitizedData = data.map(({ contraseña, ...usuarioSinContraseña }) => usuarioSinContraseña);
+    const sanitizedData = data.map(({ password, ...usuarioSinpassword }) => usuarioSinpassword);
 
     return {
       data: sanitizedData,
@@ -120,13 +120,13 @@ export class UsuariosService {
     };
   }
 
-  async restore(id: number): Promise<Omit<Usuario, 'contraseña'> | null> {
+  async restore(id: number): Promise<Omit<Usuario, 'password'> | null> {
     const usuario = await this.usuarioRepository.findOne({ where: { id }, withDeleted: true });
     if (!usuario) {
       throw new Error('El usuario no existe o no está eliminado');
     }
     await this.usuarioRepository.recover(usuario);
-    const { contraseña, ...usuarioSinContraseña } = usuario;
-    return usuarioSinContraseña;
+    const { password, ...usuarioSinpassword } = usuario;
+    return usuarioSinpassword;
   }
 }

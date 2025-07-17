@@ -6,7 +6,7 @@ describe('CreateUsuarioDto', () => {
     const dto = new CreateUsuarioDto();
     dto.correo = 'test@example.com';
     dto.nombreCompleto = 'Test User';
-    dto.contraseña = 'password123';
+    dto.password = 'password123';
 
     const errors = await validate(dto);
     expect(errors.length).toBe(0);
@@ -15,21 +15,21 @@ describe('CreateUsuarioDto', () => {
   it('debería ser inválido sin correo', async () => {
     const dto = new CreateUsuarioDto();
     dto.nombreCompleto = 'Test User';
-    dto.contraseña = 'password123';
+    dto.password = 'password123';
 
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].property).toBe('correo');
   });
 
-  it('debería ser inválido con contraseña corta', async () => {
+  it('debería ser inválido con password corta', async () => {
     const dto = new CreateUsuarioDto();
     dto.correo = 'test@example.com';
     dto.nombreCompleto = 'Test User';
-    dto.contraseña = '123';
+    dto.password = '123';
 
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
-    expect(errors[0].property).toBe('contraseña');
+    expect(errors[0].property).toBe('password');
   });
 });

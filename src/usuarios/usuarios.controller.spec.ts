@@ -39,7 +39,7 @@ describe('UsuariosController', () => {
       const createUsuarioDto: CreateUsuarioDto = {
         correo: 'test@example.com',
         nombreCompleto: 'Test User',
-        contraseña: 'password123',
+        password: 'password123',
       };
       mockUsuariosService.create.mockResolvedValue({ id: 1, ...createUsuarioDto });
 

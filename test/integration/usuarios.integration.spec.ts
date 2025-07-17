@@ -43,7 +43,7 @@ describe('Usuarios Módulo (Integración)', () => {
     const usuario = {
       correo: 'test@example.com',
       nombreCompleto: 'Test User',
-      contraseña: 'password123',
+      password: 'password123',
     };
 
     const response = await request(app.getHttpServer())
@@ -59,7 +59,7 @@ describe('Usuarios Módulo (Integración)', () => {
     const usuario = {
       correo: 'test2@example.com',
       nombreCompleto: 'Test User 2',
-      contraseña: 'password123',
+      password: 'password123',
     };
 
     const response = await request(app.getHttpServer())
@@ -87,7 +87,7 @@ describe('Usuarios Módulo (Integración)', () => {
     const usuario = {
       correo: 'obtenerid@example.com',
       nombreCompleto: 'Obtener ID User',
-      contraseña: 'password123',
+      password: 'password123',
     };
 
     const createResponse = await request(app.getHttpServer())
@@ -112,7 +112,7 @@ describe('Usuarios Módulo (Integración)', () => {
     const usuario = {
       correo: 'updateuser@example.com',
       nombreCompleto: 'User To Update',
-      contraseña: 'password123',
+      password: 'password123',
     };
 
     const createResponse = await request(app.getHttpServer())
@@ -139,7 +139,7 @@ describe('Usuarios Módulo (Integración)', () => {
     const usuario = {
       correo: 'deleteuser@example.com',
       nombreCompleto: 'User To Delete',
-      contraseña: 'password123',
+      password: 'password123',
     };
 
     const createResponse = await request(app.getHttpServer())

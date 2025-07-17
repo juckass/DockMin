@@ -7,7 +7,7 @@ export const usuarioCreateBodyDoc = {
   examples: {
     ejemplo: {
       summary: 'Ejemplo de creación de usuario',
-      value: { correo: 'test@example.com', nombreCompleto: 'Test User', contraseña: 'password123' }
+      value: { correo: 'test@example.com', nombreCompleto: 'Test User', password: 'password123' }
     }
   }
 };

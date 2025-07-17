@@ -12,7 +12,7 @@ export class Usuario {
   nombreCompleto: string;
 
   @Column()
-  contraseña: string;
+  password: string;
 
   @Column({ default: 'user' })
   rol: string;
