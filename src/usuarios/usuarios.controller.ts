@@ -4,26 +4,29 @@ import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { usuarioCreateBodyDoc, usuarioCreateResponseDoc, usuarioFindAllQueryDocs, usuarioFindOneResponseDoc, usuarioFindOneErrorDoc, usuarioUpdateBodyDoc, usuarioUpdateResponseDoc, usuarioUpdateErrorDoc } from './docs/usuarios-swagger.docs';
+import { HasPermission } from '../auth/decorators/has-permission.decorator';
 
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
+  @HasPermission()
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiResponse(usuarioCreateResponseDoc)
   async create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuariosService.create(createUsuarioDto);
   }
-
+  
+  @HasPermission()
   @Get()
   @ApiOperation({ summary: 'Obtener todos los usuarios con paginación' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
   async findAll(@Query() query: { page?: number; limit?: number }) {
     return this.usuariosService.findAll(query);
   }
-
+  @HasPermission()
   @Get('eliminados')
   @ApiOperation({ summary: 'Obtener todos los usuarios eliminados con paginación' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios eliminados.' })
@@ -31,6 +34,8 @@ export class UsuariosController {
     return this.usuariosService.findDeleted(query);
   }
 
+
+  @HasPermission()
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un usuario por ID' })
   @ApiResponse(usuarioFindOneResponseDoc)
@@ -43,6 +48,7 @@ export class UsuariosController {
     return usuario;
   }
 
+  @HasPermission()
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un usuario por ID' })
   @ApiResponse(usuarioUpdateResponseDoc)
@@ -55,6 +61,7 @@ export class UsuariosController {
     return usuario;
   }
 
+  @HasPermission()
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un usuario por ID' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente.' })
@@ -68,6 +75,7 @@ export class UsuariosController {
     }
   }
 
+  @HasPermission()
   @Patch(':id/restaurar')
   @ApiOperation({ summary: 'Restaurar un usuario eliminado por ID' })
   @ApiResponse({ status: 200, description: 'Usuario restaurado exitosamente.' })
