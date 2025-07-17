@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, DeleteDateColumn } from 'typeorm';
+import { Role } from '../../auth/entities/role.entity';
 
 @Entity('usuarios')
 export class Usuario {
@@ -14,8 +15,8 @@ export class Usuario {
   @Column()
   password: string;
 
-  @Column({ default: 'user' })
-  rol: string;
+  @ManyToOne(() => Role, { eager: true })
+  rol: Role;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;

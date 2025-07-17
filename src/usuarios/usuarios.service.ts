@@ -129,4 +129,8 @@ export class UsuariosService {
     const { password, ...usuarioSinpassword } = usuario;
     return usuarioSinpassword;
   }
+
+  async findByEmail(email: string): Promise<Usuario | null> {
+    return await this.usuarioRepository.findOneBy({ correo: email });
+  }
 }

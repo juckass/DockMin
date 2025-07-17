@@ -7,6 +7,7 @@ import { AmbientesModule } from './ambientes/ambientes.module';
 import { DockerModule } from './docker/docker.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,7 @@ import { AppController } from './app.controller';
     AmbientesModule,
     DockerModule,
     UsuariosModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],
