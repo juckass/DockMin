@@ -2,11 +2,12 @@ import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, Query } 
 import { AmbientesService } from './ambientes.service';
 import { CreateAmbienteDto } from './dto/create-ambiente.dto';
 import { UpdateAmbienteDto } from './dto/update-ambiente.dto';
-import { ApiTags, ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ClientesService } from '../clientes/clientes.service';
 import { ambienteCreateBodyDoc, ambienteCreateResponseDoc, ambienteCreateErrorDoc, ambienteFindAllQueryDocs } from './docs/ambientes-swagger.docs';
 
 @ApiTags('Ambientes')
+@ApiBearerAuth()
 @Controller('ambientes')
 export class AmbientesController {
   constructor(

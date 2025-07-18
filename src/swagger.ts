@@ -10,8 +10,9 @@ export function setupSwagger(app: INestApplication): void {
     .addTag('Ambientes')
     .addTag('Docker')
     .addTag('Usuarios')
+    .addBearerAuth() // <-- Agrega esto
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 }

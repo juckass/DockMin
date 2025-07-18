@@ -1,5 +1,5 @@
 import { Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiExtraModels, getSchemaPath, ApiBearerAuth } from '@nestjs/swagger';
 import { DockerService } from './docker.service';
 import { AmbientesService } from '../ambientes/ambientes.service';
 import { DockerCommandResultDto } from './dto/docker-command-result.dto';
@@ -14,6 +14,7 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Docker')
+@ApiBearerAuth()
 @ApiExtraModels(DockerCommandResultDto)
 @Controller('docker')
 export class DockerController {

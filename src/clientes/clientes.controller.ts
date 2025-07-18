@@ -1,5 +1,5 @@
 import { Controller, Body, Post, Get, Param, Put, Delete, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiTags, ApiBody, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -13,6 +13,7 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Clientes')
+@ApiBearerAuth()
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}

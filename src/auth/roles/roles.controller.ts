@@ -4,7 +4,7 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from '../dto/create-role.dto';
 import { UpdateRoleDto } from '../dto/update-role.dto';
 import { HasPermission } from '../decorators/has-permission.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 
 
 
@@ -14,6 +14,7 @@ import { PermissionsGuard } from '../guards/permissions.guard';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Roles')
+@ApiBearerAuth()
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
