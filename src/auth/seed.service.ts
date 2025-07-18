@@ -26,10 +26,11 @@ export class SeedService {
     const adminUser = await this.usuariosService.findByEmail('admin@dockmin.com');
     if (!adminUser) {
      
+      const hashedPassword = "admin123";
       await this.usuariosService.create({
-        correo: 'admin@dockmin.com',
+        email: 'admin@dockmin.com',
         nombreCompleto: 'Administrador',
-        password: 'admin123',
+        password: hashedPassword,
         roleId: adminRole.id,
       });
       this.logger.log('Usuario admin creado');

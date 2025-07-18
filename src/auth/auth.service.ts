@@ -31,7 +31,7 @@ export class AuthService {
     const permisos = user.role?.permisos?.map((p: any) => p.nombre) || [];
     const payload = { 
       sub: user.id, 
-      email: user.correo, 
+      email: user.email, 
       rolId: user.roleId, 
       rol: user.role?.nombre,
       permisos
@@ -66,7 +66,7 @@ export class AuthService {
     const permisos = userWithRole?.role?.permisos?.map((p: any) => p.nombre) || [];
     const payload = {
       sub: user.id,
-      email: user.correo,
+      email: user.email,
       rolId: user.roleId,
       rol: userWithRole?.role?.nombre,
       permisos

@@ -289,13 +289,13 @@ Esta integración permite operar ambientes desde Slack de forma segura, rápida 
 
 ---
 
-## 🛡️ Autenticación y autorización (JWT + RBAC)
+## 🛡️ Autenticación, autorización y robustez de modelo (JWT + RBAC)
 
-- Dockmin implementa autenticación JWT y control de acceso basado en roles y permisos (RBAC).
-- Los usuarios tienen un rol asignado (`user`, `admin`, etc.) y los roles pueden tener múltiples permisos configurables desde la base de datos.
-- El sistema incluye un seeder automático que crea los roles `admin` y `user` si no existen, y también crea el usuario admin con el rol correspondiente si no existe.
-- La relación entre usuario y rol está correctamente configurada y visible en las respuestas de la API.
-- Los endpoints CRUD para roles y permisos están disponibles y documentados en Postman.
-- Los guards y decoradores permiten proteger endpoints según roles y permisos definidos en la base de datos.
-- Puedes agregar nuevos roles y permisos sin modificar el código, solo actualizando la base de datos.
-- El login soporta usuario/contraseña y Google OAuth, y es extensible a otras redes sociales.
+- **Modelo de usuario actualizado:** Todo el sistema usa ahora el campo `email` (en vez de `correo`) en entidades, DTOs, servicios y pruebas. Esto asegura consistencia y compatibilidad con integraciones modernas.
+- **Pruebas robustas:** Todos los tests unitarios y de integración han sido actualizados y pasan correctamente. Los mocks y expectativas están alineados con el modelo real, incluyendo la relación usuario-rol y el uso de `email`.
+- **Seeder alineado:** El seeder crea los roles `admin` y `user` si no existen, y el usuario admin con el campo `email` y password hasheado, validando la robustez del flujo inicial.
+- **Cobertura de pruebas:** Se cubren flujos completos de autenticación, creación de usuarios, roles y permisos, validando tanto casos exitosos como errores (por ejemplo, email duplicado).
+- **JWT y RBAC:** Dockmin implementa autenticación JWT y control de acceso basado en roles y permisos (RBAC). Los tokens incluyen información de usuario, rol y permisos, y los guards permiten proteger endpoints según la configuración en base de datos.
+- **Extensible y seguro:** Puedes agregar nuevos roles y permisos solo actualizando la base de datos. El login soporta usuario/contraseña y Google OAuth, y es extensible a otras redes sociales.
+- **Mocks y DTOs alineados:** Todos los mocks y DTOs de pruebas reflejan la estructura real del modelo, evitando errores por desincronización.
+- **Mensajes y validaciones:** Los mensajes de error y validaciones hacen referencia a `email`, y la lógica de unicidad y búsqueda se basa en este campo.
