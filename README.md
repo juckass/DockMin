@@ -71,6 +71,25 @@ Puedes ver todas las dependencias exactas en el archivo `package.json`.
 
 ---
 
+## ⏰ Limpieza automática de refresh tokens expirados
+
+Dockmin ejecuta un proceso automático (cron job) que elimina diariamente todos los refresh tokens expirados de la base de datos.
+
+### ¿Cómo funciona?
+
+- Cada día a la medianoche, el sistema busca usuarios cuyos refresh tokens hayan expirado y los elimina de forma segura.
+- Esto ayuda a mantener la base de datos limpia y mejora la seguridad, evitando que tokens antiguos puedan ser reutilizados.
+- El proceso queda registrado en los logs con la cantidad de tokens eliminados.
+
+### ¿Dónde está implementado?
+
+- Servicio: `src/auth/crons/refresh-token-cleaner.service.ts`
+- Método: `UsuariosService.cleanExpiredRefreshTokens()`
+
+No requiere intervención manual y funciona automáticamente en segundo plano.
+
+---
+
 ## 🌱 Seed automático de roles y usuario admin
 
 Dockmin incluye un proceso de seed automático que garantiza que siempre existan los roles y el usuario administrador necesarios para operar el sistema.
@@ -193,5 +212,15 @@ Respuesta:
 - `src/auth/auth.controller.ts` — Controlador de endpoints de autenticación.
 - `src/auth/auth.service.ts` — Lógica de login, logout, refresh y validación de tokens.
 - `src/auth/guards/` — Guards para proteger rutas según JWT y roles.
+
+### Buenas prácticas y recomendaciones de seguridad
+
+- Usa siempre HTTPS en producción para proteger los tokens en tránsito.
+- Nunca almacenes el refresh token en localStorage en aplicaciones web; usa httpOnly cookies o almacenamiento seguro.
+- El refresh token es de un solo uso: si se detecta uso indebido, se revoca automáticamente.
+- Si un refresh token es inválido o expirado, el usuario debe volver a autenticarse.
+- Cambia la contraseña del usuario admin por defecto antes de exponer la API.
+- Puedes extender el sistema para soportar OAuth u otros proveedores agregando nuevas estrategias en el módulo Auth.
+- Todos los intentos de uso de refresh token inválido quedan registrados en logs para auditoría.
 
 

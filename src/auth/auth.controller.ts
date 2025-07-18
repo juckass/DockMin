@@ -97,7 +97,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'No se pudo determinar el usuario autenticado' })
   async logout(@Req() req) {
     const userId = req.user?.userId;
-   
+  
     if (!userId) {
       throw new BadRequestException('No se pudo determinar el usuario autenticado');
     }

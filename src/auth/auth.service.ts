@@ -86,6 +86,6 @@ export class AuthService {
 
   async logout(userId: number): Promise<void> {
     if (!userId) throw new Error('userId es requerido para logout');
-    await this.usuarioRepository.update(userId, { refreshToken: undefined, refreshTokenExpires: undefined });
+    await this.usuariosService.update(userId, { refreshToken: null, refreshTokenExpires: null });
   }
 }

@@ -100,7 +100,16 @@ export class UsuariosService {
       updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
     }
 
-    await this.usuarioRepository.update(id, updateUsuarioDto);
+    // Limpia solo los campos undefined, pero deja los null
+    const updateData = Object.fromEntries(
+      Object.entries(updateUsuarioDto).filter(([_, v]) => v !== undefined)
+    );
+
+    if (Object.keys(updateData).length === 0) {
+      throw new Error('No hay datos para actualizar');
+    }
+
+    await this.usuarioRepository.update(id, updateData);
     const updatedUsuario = await this.usuarioRepository.findOneBy({ id });
     if (!updatedUsuario) {
       return null;
