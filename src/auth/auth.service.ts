@@ -76,4 +76,8 @@ export class AuthService {
       access_token: accessToken,
     };
   }
+
+  async logout(userId: number): Promise<void> {
+    await this.usuarioRepository.update(userId, { refreshToken: undefined });
+  }
 }

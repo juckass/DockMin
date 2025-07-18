@@ -1,9 +1,10 @@
-import { Controller, Post, Body, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Req, UseGuards } from '@nestjs/common';
 import { Public } from './decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard'; // o el guard que uses
 
 
 @ApiTags('auth')
@@ -37,4 +38,11 @@ export class AuthController {
     return this.authService.refreshToken(payload.sub, refreshTokenDto.refreshToken);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() req) {
+    const userId = req.user.id;
+    await this.authService.logout(userId);
+    return { message: 'Logout exitoso' };
+  }
 }
