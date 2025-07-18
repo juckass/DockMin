@@ -1,29 +1,23 @@
-# 🏭 Módulo Ambientes
 
-El módulo **Ambientes** (en desarrollo) permitirá gestionar y operar ambientes Docker asociados a cada cliente. Un ambiente representa una instancia de infraestructura (por ejemplo, desarrollo, QA, staging o producción) que puede ser levantada, detenida o consultada desde la API.
+# 📑 Índice
 
-### Objetivos principales
-- Asociar ambientes a clientes existentes.
-- Permitir operaciones de ciclo de vida: crear, listar, actualizar, eliminar, levantar, detener y reiniciar ambientes Docker.
-- Integrar con la API de Docker Engine para operaciones reales sobre contenedores.
-- Registrar logs y auditoría de operaciones sobre ambientes.
+1. [Objetivo](#objetivo)
+2. [¿Cómo está construido?](#cómo-está-construido)
+3. [Instalación y requisitos](#instalación-y-requisitos)
+4. [Seed automático de roles y usuario admin](#seed-automático-de-roles-y-usuario-admin)
+5. [Sincronización automática de permisos](#sincronización-automática-de-permisos)
+6. [Limpieza automática de refresh tokens expirados](#limpieza-automática-de-refresh-tokens-expirados)
+7. [Módulo Clientes](#módulo-clientes)
+8. [Módulo Usuarios](#módulo-usuarios)
+9. [Módulo Auth](#módulo-auth)
+10. [Módulo Ambientes](#módulo-ambientes)
+11. [Módulo Docker](#módulo-docker)
+12. [Pendientes por hacer](#pendientes-por-hacer)
 
-### Endpoints previstos (propuesta)
-- `POST /ambientes` — Crear un nuevo ambiente para un cliente.
-- `GET /ambientes` — Listar ambientes existentes (con filtros por cliente, estado, etc).
-- `GET /ambientes/:id` — Consultar detalles de un ambiente.
-- `PATCH /ambientes/:id` — Actualizar datos de un ambiente.
-- `DELETE /ambientes/:id` — Eliminar lógicamente un ambiente.
-- `POST /ambientes/:id/start` — Levantar el ambiente (iniciar contenedores).
-- `POST /ambientes/:id/stop` — Detener el ambiente.
-- `POST /ambientes/:id/restart` — Reiniciar el ambiente.
+---
 
-### Consideraciones
-- Cada ambiente está vinculado a un cliente y puede tener variables de entorno, configuración y estado propios.
-- Solo usuarios autenticados y con permisos adecuados pueden operar ambientes.
-- Todas las acciones quedan registradas en logs para trazabilidad.
+---
 
-> Esta sección se actualizará conforme avance el desarrollo del módulo.
 ## 📋 Pendientes por hacer
 
 ### Módulo Clientes
