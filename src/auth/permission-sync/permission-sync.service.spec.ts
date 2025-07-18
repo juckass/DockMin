@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PermissionSyncService } from './permission-sync.service';
 import { DiscoveryService } from '@golevelup/nestjs-discovery';
-import { PermissionsService } from './permissions/permissions.service';
-import { RolesService } from './roles/roles.service';
+import { PermissionsService } from '../permissions/permissions.service';
+import { RolesService } from '../roles/roles.service';
 
 describe('PermissionSyncService', () => {
   let service: PermissionSyncService;

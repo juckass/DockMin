@@ -8,6 +8,19 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuariosService {
+  /**
+   * Limpia los refresh tokens expirados de los usuarios.
+   * Retorna la cantidad de usuarios afectados.
+   */
+  async cleanExpiredRefreshTokens(): Promise<number> {
+    const now = new Date();
+    const result = await this.usuarioRepository.createQueryBuilder()
+      .update(Usuario)
+      .set({ refreshToken: undefined, refreshTokenExpires: undefined })
+      .where('refreshTokenExpires IS NOT NULL AND refreshTokenExpires < :now', { now })
+      .execute();
+    return result.affected || 0;
+  }
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,

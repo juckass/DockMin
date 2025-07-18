@@ -8,12 +8,12 @@ import { RolesService } from './roles/roles.service';
 import { RolesController } from './roles/roles.controller';
 import { PermissionsService } from './permissions/permissions.service';
 import { PermissionsController } from './permissions/permissions.controller';
-import { SeedService } from './seed.service';
+import { SeedService } from './seeds/seed.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './jwt-strategy/jwt.strategy';
 
 @Module({
   imports: [

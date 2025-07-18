@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DiscoverySyncService } from './discovery-sync.service';
 import { DiscoveryService } from '@golevelup/nestjs-discovery';
-import { PermissionsService } from './permissions/permissions.service';
+import { PermissionsService } from '../permissions/permissions.service';
 
 const mockDiscoveryService = {
   providerMethodsWithMetaAtKey: jest.fn(),

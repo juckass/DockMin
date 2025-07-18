@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RolesService } from './roles/roles.service';
-import { PermissionsService } from './permissions/permissions.service';
-import { UsuariosService } from '../usuarios/usuarios.service';
+import { RolesService } from '../roles/roles.service';
+import { PermissionsService } from '../permissions/permissions.service';
+import { UsuariosService } from '../../usuarios/usuarios.service';
 import * as bcrypt from 'bcrypt';
 
 

@@ -7,7 +7,7 @@ import { AmbientesModule } from './ambientes/ambientes.module';
 import { DockerModule } from './docker/docker.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AppController } from './app.controller';
-import { PermissionSyncService } from './auth/permission-sync.service';
+import { PermissionSyncService } from './auth/permission-sync/permission-sync.service';
 import { AuthModule } from './auth/auth.module';
 import { DiscoveryModule } from '@golevelup/nestjs-discovery';
 import { APP_GUARD } from '@nestjs/core';

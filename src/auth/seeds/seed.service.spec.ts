@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SeedService } from './seed.service';
-import { RolesService } from './roles/roles.service';
-import { PermissionsService } from './permissions/permissions.service';
-import { UsuariosService } from '../usuarios/usuarios.service';
+import { RolesService } from '../roles/roles.service';
+import { PermissionsService } from '../permissions/permissions.service';
+import { UsuariosService } from '../../usuarios/usuarios.service';
 import * as bcrypt from 'bcrypt';
 
 describe('SeedService', () => {

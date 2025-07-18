@@ -39,13 +39,16 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
     // Generar refresh token (expira en 7 días)
     const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET', 'refreshsecretkey');
+    const expiresIn = 60 * 60 * 24 * 7; // 7 días en segundos
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
-      { expiresIn: '7d', secret: refreshSecret }
+      { expiresIn, secret: refreshSecret }
     );
-    // Guardar refresh token hasheado en la base de datos
+    // Calcular fecha de expiración
+    const expiresAt = new Date(Date.now() + expiresIn * 1000);
+    // Guardar refresh token hasheado y expiración en la base de datos
     const hashedRefresh = await bcrypt.hash(refreshToken, 10);
-    await this.usuarioRepository.update(user.id, { refreshToken: hashedRefresh });
+    await this.usuarioRepository.update(user.id, { refreshToken: hashedRefresh, refreshTokenExpires: expiresAt });
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
@@ -56,6 +59,10 @@ export class AuthService {
     const user = await this.usuarioRepository.findOneBy({ id: userId });
     if (!user || !user.refreshToken) {
       throw new UnauthorizedException('Refresh token inválido');
+    }
+    // Validar expiración
+    if (!user.refreshTokenExpires || user.refreshTokenExpires < new Date()) {
+      throw new UnauthorizedException('Refresh token expirado');
     }
     const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
     if (!isMatch) {
@@ -79,6 +86,6 @@ export class AuthService {
 
   async logout(userId: number): Promise<void> {
     if (!userId) throw new Error('userId es requerido para logout');
-   // await this.usuarioRepository.update(userId, { refreshToken: undefined });
+    await this.usuarioRepository.update(userId, { refreshToken: undefined, refreshTokenExpires: undefined });
   }
 }

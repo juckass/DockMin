@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscoveryService } from '@golevelup/nestjs-discovery';
-import { PERMISSION_KEY } from './decorators/has-permission.decorator';
+import { PERMISSION_KEY } from '../decorators/has-permission.decorator';
 
-import { PermissionsService } from './permissions/permissions.service';
-import { RolesService } from './roles/roles.service';
+import { PermissionsService } from '../permissions/permissions.service';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class PermissionSyncService {
