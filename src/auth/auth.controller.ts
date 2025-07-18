@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Req } from '@nestjs/common';
 import { Public } from './decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 
 @ApiTags('auth')
@@ -19,4 +20,20 @@ export class AuthController {
     }
     return this.authService.login(user);
   }
+
+  @Public()
+  @Post('refresh')
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
+    // Decodificar el refresh token para obtener el userId
+    let payload: any;
+    try {
+      payload = this.authService["jwtService"].verify(refreshTokenDto.refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET || 'refreshsecretkey',
+      });
+    } catch (e) {
+      throw new UnauthorizedException('Refresh token inválido o expirado');
+    }
+    return this.authService.refreshToken(payload.sub, refreshTokenDto.refreshToken);
+  }
+
 }

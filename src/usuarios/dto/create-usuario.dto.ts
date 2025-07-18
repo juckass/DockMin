@@ -28,6 +28,8 @@ export class CreateUsuarioDto {
   @ApiProperty({
     example: 1,
     description: 'ID del rol asignado al usuario',
+    required: true,
   })
-  readonly roleId?: number;
+  @IsNotEmpty({ message: 'El rol es obligatorio' })
+  roleId: number;
 }

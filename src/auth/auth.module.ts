@@ -1,4 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,15 +12,21 @@ import { SeedService } from './seed.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
+import { Usuario } from '../usuarios/entities/usuario.entity';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
+    ConfigModule,
     UsuariosModule,
-    TypeOrmModule.forFeature([Role, Permission]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'supersecretkey',
-      signOptions: { expiresIn: process.env.JWT_EXPIRATION || '1h' },
+    TypeOrmModule.forFeature([Role, Permission, Usuario]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET', 'supersecretkey'),
+        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRATION', '1h') },
+      }),
     }),
   ],
   providers: [AuthService, RolesService, PermissionsService, SeedService, JwtStrategy],

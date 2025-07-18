@@ -18,8 +18,12 @@ export class Usuario {
   @Column({ nullable: true })
   roleId: number;
 
+
   @ManyToOne(() => Role, { eager: true })
   role: Role;
+
+  @Column({ nullable: true })
+  refreshToken?: string;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;

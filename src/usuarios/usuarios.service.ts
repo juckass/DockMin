@@ -19,14 +19,20 @@ export class UsuariosService {
       throw new Error('El correo ya está registrado');
     }
 
-    const salt = await bcrypt.genSalt();
+    const salt = 10;
     const hashedPassword = await bcrypt.hash(createUsuarioDto.password, salt);
+    // Relacionar el rol si viene roleId
     const usuario = this.usuarioRepository.create({
       ...createUsuarioDto,
       password: hashedPassword,
+      ...(createUsuarioDto.roleId ? { role: { id: createUsuarioDto.roleId } } : {}),
     });
     const savedUsuario = await this.usuarioRepository.save(usuario);
-    const { password, ...usuarioSinpassword } = savedUsuario;
+    const usuarioConRol = await this.usuarioRepository.findOne({
+      where: { id: savedUsuario.id },
+      relations: ['role'],
+    });
+    const { password, ...usuarioSinpassword } = usuarioConRol!;
     return usuarioSinpassword;
   }
 
@@ -77,7 +83,7 @@ export class UsuariosService {
     }
 
     if (updateUsuarioDto.password) {
-      const salt = await bcrypt.genSalt();
+      const salt = 10;
       updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
     }
 
@@ -135,6 +141,9 @@ export class UsuariosService {
   }
 
   async findByEmail(email: string): Promise<Usuario | null> {
-    return await this.usuarioRepository.findOneBy({ correo: email });
+    return await this.usuarioRepository.findOne({
+      where: { correo: email },
+      relations: ['role', 'role.permisos'],
+    });
   }
 }

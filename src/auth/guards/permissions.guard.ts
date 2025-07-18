@@ -29,9 +29,15 @@ export class PermissionsGuard implements CanActivate {
     if (user.rol === 'admin' || user.rol === 'administrador') {
       return true;
     }
+
+    // Buscar los permisos asignados al rol
+    const permisosRol = user.role?.permisos || user.permisos || [];
+    // Si el usuario solo tiene el nombre del rol, no los permisos, denegar
+    if (!Array.isArray(permisosRol) || permisosRol.length === 0) {
+      throw new ForbiddenException('No tienes permisos asignados');
+    }
     // Validar si el usuario tiene el permiso requerido
-    const permisos = user.permisos || [];
-    if (permisos.includes(requiredPermission)) {
+    if (permisosRol.includes(requiredPermission)) {
       return true;
     }
     throw new ForbiddenException('No tienes permisos para realizar esta acción');
