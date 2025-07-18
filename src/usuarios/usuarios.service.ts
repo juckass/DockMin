@@ -140,7 +140,7 @@ export class UsuariosService {
       take: limit,
     });
 
-    console.log('Usuarios eliminados:', data);
+    
 
     const sanitizedData = data.map(({ password, ...usuarioSinpassword }) => usuarioSinpassword);
 

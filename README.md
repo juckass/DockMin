@@ -142,7 +142,61 @@ Dockmin implementa un proceso automático para mantener sincronizados los permis
 
 ---
 
-##  Módulo Auth
+
+## 👤 Módulo Usuarios
+
+El módulo **Usuarios** permite la gestión completa de usuarios en Dockmin, incluyendo creación, consulta, actualización, eliminación lógica (soft delete) y restauración. Todos los endpoints están protegidos por autenticación JWT y control de permisos (RBAC).
+
+### Endpoints principales
+
+- `POST /usuarios` — Crea un nuevo usuario.
+- `GET /usuarios` — Lista usuarios activos con paginación (`?page=1&limit=10`).
+- `GET /usuarios/eliminados` — Lista usuarios eliminados (soft delete) con paginación.
+- `GET /usuarios/:id` — Obtiene un usuario por su ID.
+- `PATCH /usuarios/:id` — Actualiza parcialmente un usuario.
+- `DELETE /usuarios/:id` — Elimina lógicamente (soft delete) un usuario.
+- `PATCH /usuarios/:id/restaurar` — Restaura un usuario eliminado.
+
+### Ejemplo de creación de usuario
+
+```json
+{
+  "email": "nuevo@cliente.com",
+  "nombreCompleto": "Cliente Nuevo",
+  "password": "password123"
+}
+```
+
+### Ejemplo de respuesta (creación)
+
+```json
+{
+  "id": 2,
+  "email": "nuevo@cliente.com",
+  "nombreCompleto": "Cliente Nuevo",
+  "rol": "user",
+  "createdAt": "2025-07-18T12:00:00.000Z"
+}
+```
+
+### Consideraciones y buenas prácticas
+
+- Todos los endpoints requieren autenticación y permisos adecuados.
+- La eliminación de usuarios es lógica (soft delete): los datos no se borran físicamente y pueden restaurarse.
+- Los usuarios eliminados no pueden autenticarse ni operar hasta ser restaurados.
+- El email es único y obligatorio.
+- La contraseña debe tener al menos 6 caracteres y se almacena de forma segura (hash).
+- Los cambios de contraseña invalidan automáticamente el refresh token del usuario.
+- El sistema registra en logs todas las operaciones sensibles sobre usuarios.
+
+### Estructura básica
+
+- `src/usuarios/usuarios.controller.ts` — Controlador de endpoints de usuarios.
+- `src/usuarios/usuarios.service.ts` — Lógica de negocio y acceso a datos.
+- `src/usuarios/dto/` — DTOs para validación y documentación de datos de entrada/salida.
+- `src/usuarios/entities/` — Entidad de usuario y mapeo ORM.
+
+---
 
 El módulo **Auth** gestiona la autenticación y autorización de usuarios en Dockmin. Implementa JWT para sesiones seguras, refresh tokens y control de acceso por roles (RBAC).
 

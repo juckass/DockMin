@@ -1,11 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional, MinLength } from 'class-validator';
 
+/**
+ * DTO para la actualización parcial de un usuario.
+ *
+ * Ejemplo de uso:
+ * {
+ *   "email": "nuevo@email.com",
+ *   "nombreCompleto": "Nuevo Nombre",
+ *   "password": "nuevopass123",
+ *   "refreshToken": null,
+ *   "refreshTokenExpires": null
+ * }
+ */
 export class UpdateUsuarioDto {
   @ApiProperty({
     example: 'test@example.com',
-    description: 'Correo electrónico del usuario',
-    required: false,
+    description: 'Nuevo correo electrónico del usuario (opcional).',
+    required: false
   })
   @IsEmail()
   @IsOptional()
@@ -13,16 +25,16 @@ export class UpdateUsuarioDto {
 
   @ApiProperty({
     example: 'Updated User',
-    description: 'Nombre completo del usuario',
-    required: false,
+    description: 'Nuevo nombre completo del usuario (opcional).',
+    required: false
   })
   @IsOptional()
   nombreCompleto?: string;
 
   @ApiProperty({
     example: 'newpassword123',
-    description: 'Nueva password del usuario (mínimo 6 caracteres)',
-    required: false,
+    description: 'Nueva contraseña del usuario (mínimo 6 caracteres, opcional).',
+    required: false
   })
   @IsOptional()
   @MinLength(6)
@@ -30,16 +42,16 @@ export class UpdateUsuarioDto {
 
   @ApiProperty({
     example: 'some-refresh-token',
-    description: 'Token de actualización del usuario',
-    required: false,
+    description: 'Nuevo refresh token del usuario (opcional, para uso interno).',
+    required: false
   })
   @IsOptional()
   refreshToken?: string | null;
 
   @ApiProperty({
     example: '2023-12-31T23:59:59.999Z',
-    description: 'Fecha de expiración del token de actualización',
-    required: false,
+    description: 'Nueva fecha de expiración del refresh token (opcional, para uso interno).',
+    required: false
   })
   @IsOptional()
   refreshTokenExpires?: Date | null;

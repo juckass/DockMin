@@ -10,40 +10,72 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 
-//@UseGuards(JwtAuthGuard, PermissionsGuard)
+
+/**
+ * Controlador para la gestión de usuarios.
+ * Incluye endpoints para CRUD, restauración y paginación.
+ *
+ * Todos los endpoints requieren autenticación JWT y permisos adecuados.
+ *
+ * Ejemplo de uso (Swagger):
+ *   - Crear usuario
+ *   - Listar usuarios paginados
+ *   - Actualizar usuario por ID
+ *   - Eliminar y restaurar usuario
+ */
 @ApiTags('Usuarios')
 @ApiBearerAuth()
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
+  /**
+   * Crea un nuevo usuario.
+   * @param createUsuarioDto Datos del usuario a crear
+   * @returns Usuario creado
+   */
   @HasPermission()
   @Post()
-  @ApiOperation({ summary: 'Crear un nuevo usuario' })
+  @ApiOperation({ summary: 'Crear un nuevo usuario', description: 'Crea un usuario con correo, nombre completo y contraseña.' })
   @ApiResponse(usuarioCreateResponseDoc)
   async create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuariosService.create(createUsuarioDto);
   }
   
+  /**
+   * Obtiene todos los usuarios con paginación.
+   * @param query Parámetros de paginación (page, limit)
+   * @returns Lista paginada de usuarios
+   */
   @HasPermission()
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los usuarios con paginación' })
+  @ApiOperation({ summary: 'Obtener todos los usuarios con paginación', description: 'Devuelve una lista paginada de usuarios activos.' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
   async findAll(@Query() query: { page?: number; limit?: number }) {
     return this.usuariosService.findAll(query);
   }
+  /**
+   * Obtiene todos los usuarios eliminados (soft delete) con paginación.
+   * @param query Parámetros de paginación (page, limit)
+   * @returns Lista paginada de usuarios eliminados
+   */
   @HasPermission()
   @Get('eliminados')
-  @ApiOperation({ summary: 'Obtener todos los usuarios eliminados con paginación' })
+  @ApiOperation({ summary: 'Obtener todos los usuarios eliminados con paginación', description: 'Devuelve una lista paginada de usuarios eliminados (soft delete).' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios eliminados.' })
   async findDeleted(@Query() query: { page?: number; limit?: number }) {
     return this.usuariosService.findDeleted(query);
   }
 
 
+  /**
+   * Obtiene un usuario por su ID.
+   * @param id ID del usuario
+   * @returns Usuario encontrado o mensaje de error
+   */
   @HasPermission()
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener un usuario por ID' })
+  @ApiOperation({ summary: 'Obtener un usuario por ID', description: 'Busca y devuelve un usuario por su identificador único.' })
   @ApiResponse(usuarioFindOneResponseDoc)
   @ApiResponse(usuarioFindOneErrorDoc)
   async findOne(@Param('id') id: number) {
@@ -54,9 +86,15 @@ export class UsuariosController {
     return usuario;
   }
 
+  /**
+   * Actualiza parcialmente un usuario por su ID.
+   * @param id ID del usuario
+   * @param updateUsuarioDto Datos a actualizar (parciales)
+   * @returns Usuario actualizado o mensaje de error
+   */
   @HasPermission()
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar un usuario por ID' })
+  @ApiOperation({ summary: 'Actualizar un usuario por ID', description: 'Actualiza los datos de un usuario existente. Solo se modifican los campos enviados.' })
   @ApiResponse(usuarioUpdateResponseDoc)
   @ApiResponse(usuarioUpdateErrorDoc)
   async update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
@@ -67,9 +105,14 @@ export class UsuariosController {
     return usuario;
   }
 
+  /**
+   * Elimina (soft delete) un usuario por su ID.
+   * @param id ID del usuario
+   * @returns Mensaje de éxito o error
+   */
   @HasPermission()
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un usuario por ID' })
+  @ApiOperation({ summary: 'Eliminar un usuario por ID', description: 'Elimina lógicamente (soft delete) un usuario. No se borra físicamente.' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   async remove(@Param('id') id: number) {
@@ -82,9 +125,14 @@ export class UsuariosController {
   }
 
   
+  /**
+   * Restaura un usuario eliminado (soft delete) por su ID.
+   * @param id ID del usuario
+   * @returns Usuario restaurado o mensaje de error
+   */
   @HasPermission()
   @Patch(':id/restaurar')
-  @ApiOperation({ summary: 'Restaurar un usuario eliminado por ID' })
+  @ApiOperation({ summary: 'Restaurar un usuario eliminado por ID', description: 'Restaura un usuario previamente eliminado (soft delete).' })
   @ApiResponse({ status: 200, description: 'Usuario restaurado exitosamente.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado o no está eliminado.' })
   async restore(@Param('id') id: number) {
