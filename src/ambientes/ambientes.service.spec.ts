@@ -224,11 +224,14 @@ describe('AmbientesService', () => {
   it('should update an ambiente', async () => {
     const dto: UpdateAmbienteDto = { nombre: 'qa2' };
     const updateResult = { affected: 1 };
+    const ambiente: Ambiente = { id: 1, clienteId: 1, nombre: 'qa2', path: '/proyectos/demo/qa', comandoUp: '', comandoDown: '' };
     (ambienteRepository.update as jest.Mock).mockResolvedValue(updateResult);
+    (ambienteRepository.findOneBy as jest.Mock).mockResolvedValue(ambiente);
 
     const result = await service.update(1, dto);
     expect(ambienteRepository.update).toHaveBeenCalledWith(1, dto);
-    expect(result).toEqual(updateResult);
+    expect(ambienteRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    expect(result).toEqual(ambiente);
   });
 
   it('should throw NotFoundException if ambiente not found on update', async () => {

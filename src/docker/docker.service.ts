@@ -146,7 +146,7 @@ export class DockerService {
         // Solo permite docker compose up/down/ps (con o sin --profile, -d, etc)
         const allowed = [
             /^docker compose( --profile=[\w-]+)? up( -d)?$/,
-            /^docker compose down$/,
+            /^docker compose( --profile=[\w-]+)? down( -d)?$/,
             /^docker compose ps$/
         ];
         // Rechaza operadores peligrosos

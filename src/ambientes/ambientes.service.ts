@@ -84,7 +84,9 @@ export class AmbientesService {
     if (result.affected === 0) {
       throw new NotFoundException('No se pudo actualizar: ambiente no encontrado');
     }
-    return result;
+    // Devolver el ambiente actualizado
+    const ambiente = await this.ambienteRepository.findOneBy({ id });
+    return ambiente;
   }
 
   async remove(id: number) {
