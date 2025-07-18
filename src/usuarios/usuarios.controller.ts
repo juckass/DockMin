@@ -6,6 +6,11 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { usuarioCreateBodyDoc, usuarioCreateResponseDoc, usuarioFindAllQueryDocs, usuarioFindOneResponseDoc, usuarioFindOneErrorDoc, usuarioUpdateBodyDoc, usuarioUpdateResponseDoc, usuarioUpdateErrorDoc } from './docs/usuarios-swagger.docs';
 import { HasPermission } from '../auth/decorators/has-permission.decorator';
 
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {

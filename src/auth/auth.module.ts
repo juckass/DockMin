@@ -11,6 +11,7 @@ import { SeedService } from './seed.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Permission } from './entities/permission.entity';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION || '1h' },
     }),
   ],
-  providers: [AuthService, RolesService, PermissionsService, SeedService],
+  providers: [AuthService, RolesService, PermissionsService, SeedService, JwtStrategy],
   exports: [AuthService, PermissionsService, RolesService],
   controllers: [AuthController, RolesController, PermissionsController],
 })

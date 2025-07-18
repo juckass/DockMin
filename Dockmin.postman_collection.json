@@ -11,7 +11,9 @@
           "name": "Listar clientes",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/clientes", "host": ["{{baseUrl}}"], "path": ["clientes"] }
           }
         },
@@ -19,7 +21,9 @@
           "name": "Obtener cliente por ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes", "1"] }
           }
         },
@@ -51,7 +55,9 @@
           "name": "Eliminar cliente",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes", "1"] }
           }
         }
@@ -64,7 +70,9 @@
           "name": "Listar ambientes",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/ambientes", "host": ["{{baseUrl}}"], "path": ["ambientes"] }
           }
         },
@@ -72,7 +80,9 @@
           "name": "Obtener ambiente por ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/ambientes/1", "host": ["{{baseUrl}}"], "path": ["ambientes", "1"] }
           }
         },
@@ -104,7 +114,9 @@
           "name": "Eliminar ambiente",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/ambientes/1", "host": ["{{baseUrl}}"], "path": ["ambientes", "1"] }
           }
         },
@@ -112,7 +124,9 @@
           "name": "Listar ambientes por cliente",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/ambientes/cliente/1", "host": ["{{baseUrl}}"], "path": ["ambientes", "cliente", "1"] }
           }
         },
@@ -120,7 +134,9 @@
           "name": "Listar ambientes por cliente (paginado)",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/ambientes/cliente/2?page=1&limit=10&nombre=qa",
               "host": ["{{baseUrl}}"],
@@ -137,7 +153,9 @@
           "name": "Listar ambientes eliminados",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/ambientes/eliminados", "host": ["{{baseUrl}}"], "path": ["ambientes", "eliminados"] }
           }
         },
@@ -145,7 +163,9 @@
           "name": "Listar ambientes eliminados por cliente",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/clientes/1/ambientes/eliminados",
               "host": ["{{baseUrl}}"],
@@ -162,7 +182,9 @@
           "name": "Estado general de Docker",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/docker/status", "host": ["{{baseUrl}}"], "path": ["docker", "status"] }
           }
         },
@@ -170,7 +192,9 @@
           "name": "Levantar ambiente Docker",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/docker/up/1", "host": ["{{baseUrl}}"], "path": ["docker", "up", "1"] }
           }
         },
@@ -178,7 +202,9 @@
           "name": "Consultar contenedores Docker",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/docker/ps/1", "host": ["{{baseUrl}}"], "path": ["docker", "ps", "1"] }
           }
         },
@@ -186,7 +212,9 @@
           "name": "Bajar ambiente Docker",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/docker/down/1", "host": ["{{baseUrl}}"], "path": ["docker", "down", "1"] }
           }
         }
@@ -211,7 +239,9 @@
           "name": "Listar usuarios",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
             "url": { "raw": "{{baseUrl}}/usuarios", "host": ["{{baseUrl}}"], "path": ["usuarios"] }
           }
         },
@@ -389,6 +419,7 @@
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000" }
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "jwt", "value": "" }
   ]
 }

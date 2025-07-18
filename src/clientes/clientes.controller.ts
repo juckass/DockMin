@@ -6,7 +6,12 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Like } from 'typeorm';
 import { clienteCreateBodyDoc, clienteCreateResponseDoc, clienteFindAllQueryDocs, clienteFindOneResponseDoc, clienteFindOneErrorDoc, clienteUpdateBodyDoc, clienteUpdateResponseDoc, clienteUpdateErrorDoc } from './docs/clientes-swagger.docs';
 import { HasPermission } from '../auth/decorators/has-permission.decorator';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
 
+
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Clientes')
 @Controller('clientes')
 export class ClientesController {

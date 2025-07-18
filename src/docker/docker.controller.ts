@@ -6,6 +6,13 @@ import { DockerCommandResultDto } from './dto/docker-command-result.dto';
 import { dockerUpResponseDoc, dockerDownResponseDoc, dockerPsResponseDoc } from './docs/docker-swagger.docs';
 import { HasPermission } from '../auth/decorators/has-permission.decorator';
 
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+
+
+
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Docker')
 @ApiExtraModels(DockerCommandResultDto)
 @Controller('docker')

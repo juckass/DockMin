@@ -10,6 +10,9 @@ import { AppController } from './app.controller';
 import { PermissionSyncService } from './auth/permission-sync.service';
 import { AuthModule } from './auth/auth.module';
 import { DiscoveryModule } from '@golevelup/nestjs-discovery';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from './auth/guards/permissions.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({

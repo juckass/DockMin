@@ -6,6 +6,13 @@ import { UpdateRoleDto } from '../dto/update-role.dto';
 import { HasPermission } from '../decorators/has-permission.decorator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
+
+
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { PermissionsGuard } from '../guards/permissions.guard';
+
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Roles')
 @Controller('roles')
 export class RolesController {

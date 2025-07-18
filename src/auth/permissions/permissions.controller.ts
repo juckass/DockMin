@@ -5,7 +5,11 @@ import { CreatePermissionDto } from '../dto/create-permission.dto';
 import { UpdatePermissionDto } from '../dto/update-permission.dto';
 import { HasPermission } from '../decorators/has-permission.decorator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { PermissionsGuard } from '../guards/permissions.guard';
 
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiTags('Permisos')
 @Controller('permissions')
 export class PermissionsController {
