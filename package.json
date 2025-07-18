@@ -99,6 +99,7 @@
       "!src/ambientes/ambientes.module.ts",
       "!src/usuarios/usuarios.module.ts",
       "!src/docker/docker.module.ts",
+      "!src/auth/auth.module.ts",
       "!src/swagger.ts"
     ],
     "coverageDirectory": "./coverage",
