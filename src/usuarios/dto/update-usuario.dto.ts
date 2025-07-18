@@ -55,4 +55,11 @@ export class UpdateUsuarioDto {
   })
   @IsOptional()
   refreshTokenExpires?: Date | null;
+  @ApiProperty({
+    example: 2,
+    description: 'Nuevo ID de rol a asignar al usuario (opcional).',
+    required: false
+  })
+  @IsOptional()
+  roleId?: number;
 }

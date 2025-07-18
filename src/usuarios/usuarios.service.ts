@@ -29,7 +29,10 @@ export class UsuariosService {
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Omit<Usuario, 'password'>> {
     const existingUsuario = await this.usuarioRepository.findOneBy({ email: createUsuarioDto.email });
     if (existingUsuario) {
-      throw new Error('El email ya está registrado');
+      const error: any = new Error('El correo electrónico ya está registrado');
+      error.statusCode = 409;
+      error.message = 'El correo electrónico ya está registrado por otro usuario.';
+      throw error;
     }
 
     const salt = 10;
@@ -83,7 +86,7 @@ export class UsuariosService {
   }
 
   async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Omit<Usuario, 'password'> | null> {
-    const usuario = await this.usuarioRepository.findOneBy({ id });
+    const usuario = await this.usuarioRepository.findOne({ where: { id }, relations: ['role'] });
     if (!usuario) {
       return null; // Manejo del caso en que el usuario no exista
     }
@@ -91,7 +94,10 @@ export class UsuariosService {
     if (updateUsuarioDto.email) {
       const existingUsuario = await this.usuarioRepository.findOneBy({ email: updateUsuarioDto.email });
       if (existingUsuario && existingUsuario.id !== id) {
-        throw new Error('El email ya está registrado por otro usuario');
+        const error: any = new Error('El correo electrónico ya está registrado');
+        error.statusCode = 409;
+        error.message = 'El correo electrónico ya está registrado por otro usuario.';
+        throw error;
       }
     }
 
@@ -100,17 +106,21 @@ export class UsuariosService {
       updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
     }
 
-    // Limpia solo los campos undefined, pero deja los null
-    const updateData = Object.fromEntries(
-      Object.entries(updateUsuarioDto).filter(([_, v]) => v !== undefined)
+    // Si viene roleId, actualiza la relación de rol
+    let updateData = Object.fromEntries(
+      Object.entries(updateUsuarioDto).filter(([_, v]) => v !== undefined && v !== null && _ !== 'roleId')
     );
+
+    if (updateUsuarioDto.roleId) {
+      updateData = { ...updateData, role: { id: updateUsuarioDto.roleId } };
+    }
 
     if (Object.keys(updateData).length === 0) {
       throw new Error('No hay datos para actualizar');
     }
 
     await this.usuarioRepository.update(id, updateData);
-    const updatedUsuario = await this.usuarioRepository.findOneBy({ id });
+    const updatedUsuario = await this.usuarioRepository.findOne({ where: { id }, relations: ['role'] });
     if (!updatedUsuario) {
       return null;
     }

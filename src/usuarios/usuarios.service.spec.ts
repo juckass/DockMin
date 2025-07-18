@@ -84,7 +84,13 @@ describe('UsuariosService', () => {
 
       mockUsuarioRepository.findOneBy.mockResolvedValue({ id: 1, ...createUsuarioDto });
 
-      await expect(service.create(createUsuarioDto)).rejects.toThrow('El email ya está registrado');
+      try {
+        await service.create(createUsuarioDto);
+        fail('Debe lanzar un error');
+      } catch (error: any) {
+        expect(error.statusCode).toBe(409);
+        expect(error.message).toBe('El correo electrónico ya está registrado por otro usuario.');
+      }
       expect(mockUsuarioRepository.findOneBy).toHaveBeenCalledWith({ email: createUsuarioDto.email });
     });
   });

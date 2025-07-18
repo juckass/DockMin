@@ -230,7 +230,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"correo\": \"usuario@example.com\",\n  \"nombreCompleto\": \"Usuario Ejemplo\",\n  \"password\": \"password123\"\n}"
+          "raw": "{\n  \"email\": \"usuario@example.com\",\n  \"nombreCompleto\": \"Usuario Ejemplo\",\n  \"password\": \"password123\",\n  \"roleId\": 2\n}"
             },
             "url": { "raw": "{{baseUrl}}/usuarios", "host": ["{{baseUrl}}"], "path": ["usuarios"] }
           }
@@ -260,7 +260,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombreCompleto\": \"Usuario Actualizado\",\n  \"password\": \"newpassword123\"\n}"
+          "raw": "{\n  \"nombreCompleto\": \"Usuario Actualizado\",\n  \"password\": \"newpassword123\",\n  \"roleId\": 2\n}"
             },
             "url": { "raw": "{{baseUrl}}/usuarios/1", "host": ["{{baseUrl}}"], "path": ["usuarios", "1"] }
           }
@@ -304,7 +304,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"password123\"\n}"
+          "raw": "{\n  \"email\": \"admin@dockmin.com\",\n  \"password\": \"admin123\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
           }

@@ -1,4 +1,13 @@
 
+# 🚢 Dockmin
+
+Dockmin es una API REST pensada para facilitar la gestión de ambientes Docker de múltiples clientes desde un solo lugar. Permite levantar, bajar, consultar el estado y administrar entornos de desarrollo, QA y staging de manera centralizada y segura.
+
+## 🎯 Objetivo
+
+El objetivo principal de Dockmin es simplificar la administración de ambientes Docker, brindando a equipos de desarrollo y operaciones una herramienta robusta, segura y extensible para automatizar tareas comunes y reducir errores manuales.
+
+
 # 📑 Índice
 
 1. [Objetivo](#objetivo)
@@ -29,13 +38,6 @@
 ### Módulo Clientes
 - [ ] Desarrollar funcionalidad de `PATCH /clientes/:id/restaurar` — Restaura un cliente eliminado.
 - [ ] Desarrollar funcionalidad de `DELETE /clientes/:id` — Elimina lógicamente (soft delete) un cliente.
-# 🚢 Dockmin
-
-Dockmin es una API REST pensada para facilitar la gestión de ambientes Docker de múltiples clientes desde un solo lugar. Permite levantar, bajar, consultar el estado y administrar entornos de desarrollo, QA y staging de manera centralizada y segura.
-
-## 🎯 Objetivo
-
-El objetivo principal de Dockmin es simplificar la administración de ambientes Docker, brindando a equipos de desarrollo y operaciones una herramienta robusta, segura y extensible para automatizar tareas comunes y reducir errores manuales.
 
 ## 🏗️ ¿Cómo está construido?
 
@@ -227,6 +229,16 @@ El módulo **Clientes** permite gestionar las entidades cliente de Dockmin, repr
 ---
 
 ## 👤 Módulo Usuarios
+
+
+### Usuario por defecto creado por el seed inicial
+
+Al iniciar la aplicación por primera vez, Dockmin crea automáticamente un usuario administrador por defecto para que puedas acceder y probar la API de inmediato:
+
+- **Email:** `admin@dockmin.com`
+- **Contraseña:** `admin123`
+
+> Se recomienda cambiar la contraseña del usuario admin en producción.
 
 El módulo **Usuarios** permite la gestión completa de usuarios en Dockmin, incluyendo creación, consulta, actualización, eliminación lógica (soft delete) y restauración. Todos los endpoints están protegidos por autenticación JWT y control de permisos (RBAC).
 
