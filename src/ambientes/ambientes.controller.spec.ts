@@ -53,7 +53,7 @@ describe('AmbientesController', () => {
     const dto: CreateAmbienteDto = {
       clienteId: 1,
       nombre: 'qa',
-      path: '/proyectos/sura/qa',
+      path: '/proyectos/prueba/qa',
       comandoUp: 'docker compose up -d',
       comandoDown: 'docker compose down',
     };
@@ -66,7 +66,7 @@ describe('AmbientesController', () => {
 
   it('should return all ambientes', async () => {
     const result = [
-      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' },
+      { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/prueba/qa', comandoUp: '', comandoDown: '' },
     ];
     mockAmbientesService.findAll.mockResolvedValue(result);
 
@@ -75,7 +75,7 @@ describe('AmbientesController', () => {
   });
 
   it('should return one ambiente by id', async () => {
-    const result = { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/sura/qa', comandoUp: '', comandoDown: '' };
+    const result = { id: 1, clienteId: 1, nombre: 'qa', path: '/proyectos/prueba/qa', comandoUp: '', comandoDown: '' };
     mockAmbientesService.findOne.mockResolvedValue(result);
 
     expect(await controller.findOne(1)).toEqual(result);

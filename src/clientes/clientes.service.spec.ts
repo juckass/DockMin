@@ -60,7 +60,7 @@ describe('ClientesService', () => {
   });
 
   it('should throw BadRequestException if slug already exists on create', async () => {
-    const dto: CreateClienteDto = { nombre: 'Empresa Sura' };
+    const dto: CreateClienteDto = { nombre: 'Empresa prueba' };
     const slug = slugify(dto.nombre);
     (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 2, nombre: 'Otro', slug });
 
@@ -152,7 +152,7 @@ describe('ClientesService', () => {
   });
 
   it('should throw BadRequestException if slug already exists on update', async () => {
-    const dto: UpdateClienteDto = { nombre: 'Empresa Sura' };
+    const dto: UpdateClienteDto = { nombre: 'Empresa prueba' };
     const slug = dto.nombre ? slugify(dto.nombre) : undefined;
     (clienteRepository.findOneBy as jest.Mock).mockResolvedValue({ id: 2, nombre: 'Otro', slug });
 

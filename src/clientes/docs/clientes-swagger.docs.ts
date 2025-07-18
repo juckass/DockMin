@@ -7,7 +7,7 @@ export const clienteCreateBodyDoc = {
   examples: {
     ejemplo: {
       summary: 'Ejemplo de creación de cliente',
-      value: { nombre: 'Empresa Sura', slug: 'sura' }
+      value: { nombre: 'Empresa prueba' }
     }
   }
 };

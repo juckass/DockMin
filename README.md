@@ -1,3 +1,40 @@
+# 🏭 Módulo Ambientes
+
+El módulo **Ambientes** (en desarrollo) permitirá gestionar y operar ambientes Docker asociados a cada cliente. Un ambiente representa una instancia de infraestructura (por ejemplo, desarrollo, QA, staging o producción) que puede ser levantada, detenida o consultada desde la API.
+
+### Objetivos principales
+- Asociar ambientes a clientes existentes.
+- Permitir operaciones de ciclo de vida: crear, listar, actualizar, eliminar, levantar, detener y reiniciar ambientes Docker.
+- Integrar con la API de Docker Engine para operaciones reales sobre contenedores.
+- Registrar logs y auditoría de operaciones sobre ambientes.
+
+### Endpoints previstos (propuesta)
+- `POST /ambientes` — Crear un nuevo ambiente para un cliente.
+- `GET /ambientes` — Listar ambientes existentes (con filtros por cliente, estado, etc).
+- `GET /ambientes/:id` — Consultar detalles de un ambiente.
+- `PATCH /ambientes/:id` — Actualizar datos de un ambiente.
+- `DELETE /ambientes/:id` — Eliminar lógicamente un ambiente.
+- `POST /ambientes/:id/start` — Levantar el ambiente (iniciar contenedores).
+- `POST /ambientes/:id/stop` — Detener el ambiente.
+- `POST /ambientes/:id/restart` — Reiniciar el ambiente.
+
+### Consideraciones
+- Cada ambiente está vinculado a un cliente y puede tener variables de entorno, configuración y estado propios.
+- Solo usuarios autenticados y con permisos adecuados pueden operar ambientes.
+- Todas las acciones quedan registradas en logs para trazabilidad.
+
+> Esta sección se actualizará conforme avance el desarrollo del módulo.
+## 📋 Pendientes por hacer
+
+### Módulo Clientes
+- [ ] Desarrollar funcionalidad de `PATCH /clientes/:id/restaurar` — Restaura un cliente eliminado.
+- [ ] Desarrollar funcionalidad de `DELETE /clientes/:id` — Elimina lógicamente (soft delete) un cliente.
+- [ ] Validar si existe un cliente registrado con el mismo slug antes de crear uno nuevo y retornar una respuesta clara de error.
+## 📋 Pendientes por hacer
+
+### Módulo Clientes
+- [ ] Desarrollar funcionalidad de `PATCH /clientes/:id/restaurar` — Restaura un cliente eliminado.
+- [ ] Desarrollar funcionalidad de `DELETE /clientes/:id` — Elimina lógicamente (soft delete) un cliente.
 # 🚢 Dockmin
 
 Dockmin es una API REST pensada para facilitar la gestión de ambientes Docker de múltiples clientes desde un solo lugar. Permite levantar, bajar, consultar el estado y administrar entornos de desarrollo, QA y staging de manera centralizada y segura.
@@ -143,7 +180,112 @@ Dockmin implementa un proceso automático para mantener sincronizados los permis
 ---
 
 
+
+
+## 🏢 Módulo Clientes
+
+El módulo **Clientes** permite gestionar las entidades cliente de Dockmin, representando empresas, organizaciones o grupos que pueden tener ambientes Docker asociados. Incluye operaciones CRUD, paginación, filtrado y eliminación/restauración lógica (soft delete).
+
+### Endpoints principales
+
+- `POST /clientes` — Crea un nuevo cliente.
+- `GET /clientes` — Lista clientes activos con paginación y filtros (`?page=1&limit=10&nombre=Acme`).
+- `GET /clientes/:id` — Obtiene un cliente por su ID.
+- `PATCH /clientes/:id` — Actualiza parcialmente un cliente.
+- `DELETE /clientes/:id` — Elimina un cliente.
+
+
+### Ejemplo de creación de cliente
+
+```json
+{
+  "nombre": "Empresa prueba"
+}
+```
+
+### Ejemplo de respuesta (creación)
+
+```json
+{
+  "id": 1,
+  "nombre": "Empresa prueba",
+  "slug": "empresa-prueba",
+  "createdAt": "2025-07-18T12:00:00.000Z"
+}
+```
+
+### Consideraciones y buenas prácticas
+
+- El campo `nombre` es obligatorio y único por cliente.
+- El campo `slug` se genera automáticamente a partir del nombre y es único.
+- La eliminación es lógica (soft delete): los clientes pueden restaurarse.
+- Todos los endpoints requieren autenticación y permisos adecuados.
+- Los clientes eliminados no pueden asociar ambientes ni ser modificados hasta ser restaurados.
+- El sistema registra en logs todas las operaciones sensibles sobre clientes.
+
+### Estructura básica
+
+- `src/clientes/clientes.controller.ts` — Controlador de endpoints de clientes.
+- `src/clientes/clientes.service.ts` — Lógica de negocio y acceso a datos.
+- `src/clientes/dto/` — DTOs para validación y documentación de datos de entrada/salida.
+- `src/clientes/entities/` — Entidad de cliente y mapeo ORM.
+
+---
+
 ## 👤 Módulo Usuarios
+
+El módulo **Usuarios** permite la gestión completa de usuarios en Dockmin, incluyendo creación, consulta, actualización, eliminación lógica (soft delete) y restauración. Todos los endpoints están protegidos por autenticación JWT y control de permisos (RBAC).
+
+### Endpoints principales
+
+- `POST /usuarios` — Crea un nuevo usuario.
+- `GET /usuarios` — Lista usuarios activos con paginación (`?page=1&limit=10`).
+- `GET /usuarios/eliminados` — Lista usuarios eliminados (soft delete) con paginación.
+- `GET /usuarios/:id` — Obtiene un usuario por su ID.
+- `PATCH /usuarios/:id` — Actualiza parcialmente un usuario.
+- `DELETE /usuarios/:id` — Elimina lógicamente (soft delete) un usuario.
+- `PATCH /usuarios/:id/restaurar` — Restaura un usuario eliminado.
+
+### Ejemplo de creación de usuario
+
+```json
+{
+  "email": "nuevo@cliente.com",
+  "nombreCompleto": "Cliente Nuevo",
+  "password": "password123"
+}
+```
+
+### Ejemplo de respuesta (creación)
+
+```json
+{
+  "id": 2,
+  "email": "nuevo@cliente.com",
+  "nombreCompleto": "Cliente Nuevo",
+  "rol": "user",
+  "createdAt": "2025-07-18T12:00:00.000Z"
+}
+```
+
+### Consideraciones y buenas prácticas
+
+- Todos los endpoints requieren autenticación y permisos adecuados.
+- La eliminación de usuarios es lógica (soft delete): los datos no se borran físicamente y pueden restaurarse.
+- Los usuarios eliminados no pueden autenticarse ni operar hasta ser restaurados.
+- El email es único y obligatorio.
+- La contraseña debe tener al menos 6 caracteres y se almacena de forma segura (hash).
+- Los cambios de contraseña invalidan automáticamente el refresh token del usuario.
+- El sistema registra en logs todas las operaciones sensibles sobre usuarios.
+
+### Estructura básica
+
+- `src/usuarios/usuarios.controller.ts` — Controlador de endpoints de usuarios.
+- `src/usuarios/usuarios.service.ts` — Lógica de negocio y acceso a datos.
+- `src/usuarios/dto/` — DTOs para validación y documentación de datos de entrada/salida.
+- `src/usuarios/entities/` — Entidad de usuario y mapeo ORM.
+
+---
 
 El módulo **Usuarios** permite la gestión completa de usuarios en Dockmin, incluyendo creación, consulta, actualización, eliminación lógica (soft delete) y restauración. Todos los endpoints están protegidos por autenticación JWT y control de permisos (RBAC).
 

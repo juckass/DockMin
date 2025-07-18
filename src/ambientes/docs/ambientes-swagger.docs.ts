@@ -10,8 +10,8 @@ export const ambienteCreateBodyDoc = {
       value: {
         clienteId: 1,
         nombre: 'qa',
-        path: '/proyectos/sura/qa',
-        prefijo: 'sura_qa',
+        path: '/proyectos/prueba/qa',
+        prefijo: 'prueba_qa',
         comandoUp: 'docker compose --profile=nginx up -d',
         comandoDown: 'docker compose down',
         perfiles: ['nginx', 'php', 'mysql'],

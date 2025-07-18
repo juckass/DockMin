@@ -34,7 +34,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Empresa Sura\"\n}"
+              "raw": "{\n  \"nombre\": \"Empresa prueba\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/clientes", "host": ["{{baseUrl}}"], "path": ["clientes"] }
           }
@@ -46,7 +46,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Empresa Sura Actualizada\"\n}"
+              "raw": "{\n  \"nombre\": \"Empresa prueba Actualizada\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes", "1"] }
           }
@@ -93,7 +93,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"nombre\": \"qa\",\n  \"path\": \"/proyectos/sura/qa\",\n  \"prefijo\": \"sura_qa\",\n  \"comandoUp\": \"docker compose --profile=nginx up -d\",\n  \"comandoDown\": \"docker compose down\",\n  \"perfiles\": [\"nginx\", \"php\", \"mysql\"],\n  \"autostart\": true,\n  \"orden\": 1\n}"
+              "raw": "{\n  \"clienteId\": 1,\n  \"nombre\": \"qa\",\n  \"path\": \"/proyectos/prueba/qa\",\n  \"prefijo\": \"prueba_qa\",\n  \"comandoUp\": \"docker compose --profile=nginx up -d\",\n  \"comandoDown\": \"docker compose down\",\n  \"perfiles\": [\"nginx\", \"php\", \"mysql\"],\n  \"autostart\": true,\n  \"orden\": 1\n}"
             },
             "url": { "raw": "{{baseUrl}}/ambientes", "host": ["{{baseUrl}}"], "path": ["ambientes"] }
           }
@@ -105,7 +105,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"qa2\",\n  \"path\": \"/proyectos/sura/qa2\",\n  \"comandoUp\": \"docker compose up -d\",\n  \"comandoDown\": \"docker compose down\"\n}"
+              "raw": "{\n  \"nombre\": \"qa2\",\n  \"path\": \"/proyectos/prueba/qa2\",\n  \"comandoUp\": \"docker compose up -d\",\n  \"comandoDown\": \"docker compose down\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/ambientes/1", "host": ["{{baseUrl}}"], "path": ["ambientes", "1"] }
           }
