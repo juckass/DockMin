@@ -14,9 +14,9 @@ export class UsuariosService {
   ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Omit<Usuario, 'password'>> {
-    const existingUsuario = await this.usuarioRepository.findOneBy({ correo: createUsuarioDto.correo });
+    const existingUsuario = await this.usuarioRepository.findOneBy({ email: createUsuarioDto.email });
     if (existingUsuario) {
-      throw new Error('El correo ya está registrado');
+      throw new Error('El email ya está registrado');
     }
 
     const salt = 10;
@@ -75,10 +75,10 @@ export class UsuariosService {
       return null; // Manejo del caso en que el usuario no exista
     }
 
-    if (updateUsuarioDto.correo) {
-      const existingUsuario = await this.usuarioRepository.findOneBy({ correo: updateUsuarioDto.correo });
+    if (updateUsuarioDto.email) {
+      const existingUsuario = await this.usuarioRepository.findOneBy({ email: updateUsuarioDto.email });
       if (existingUsuario && existingUsuario.id !== id) {
-        throw new Error('El correo ya está registrado por otro usuario');
+        throw new Error('El email ya está registrado por otro usuario');
       }
     }
 
@@ -142,7 +142,7 @@ export class UsuariosService {
 
   async findByEmail(email: string): Promise<Usuario | null> {
     return await this.usuarioRepository.findOne({
-      where: { correo: email },
+      where: { email },
       relations: ['role', 'role.permisos'],
     });
   }

@@ -9,7 +9,7 @@ export class UpdateUsuarioDto {
   })
   @IsEmail()
   @IsOptional()
-  correo?: string;
+  email?: string;
 
   @ApiProperty({
     example: 'Updated User',

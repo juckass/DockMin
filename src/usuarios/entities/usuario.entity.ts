@@ -7,7 +7,7 @@ export class Usuario {
   id: number;
 
   @Column({ unique: true })
-  correo: string;
+  email: string;
 
   @Column()
   nombreCompleto: string;
