@@ -289,6 +289,17 @@ Esta integración permite operar ambientes desde Slack de forma segura, rápida 
 
 ---
 
+
+## 👤 Usuario de prueba
+
+- **Usuario admin de prueba:**
+  - **Email:** admin@dockmin.com
+  - **Contraseña:** admin123
+
+Puedes usar este usuario para acceder a la API y probar los endpoints protegidos.
+
+---
+
 ## 🛡️ Autenticación, autorización y robustez de modelo (JWT + RBAC)
 
 - **Modelo de usuario actualizado:** Todo el sistema usa ahora el campo `email` (en vez de `correo`) en entidades, DTOs, servicios y pruebas. Esto asegura consistencia y compatibilidad con integraciones modernas.

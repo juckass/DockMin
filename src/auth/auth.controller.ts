@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UnauthorizedException, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Req, UseGuards, BadRequestException } from '@nestjs/common';
 import { Public } from './decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -38,10 +38,14 @@ export class AuthController {
     return this.authService.refreshToken(payload.sub, refreshTokenDto.refreshToken);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @UseGuards(JwtAuthGuard)
   async logout(@Req() req) {
-    const userId = req.user.id;
+    const userId = req.user?.userId;
+   
+    if (!userId) {
+      throw new BadRequestException('No se pudo determinar el usuario autenticado');
+    }
     await this.authService.logout(userId);
     return { message: 'Logout exitoso' };
   }
