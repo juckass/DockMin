@@ -28,7 +28,11 @@ import { PermissionsGuard } from './auth/guards/permissions.guard';
             ? ':memory:'
             : config.get('DATABASE_PATH') || './data/dockmin.sqlite',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: config.get('NODE_ENV') === 'development' && config.get('DATABASE_SYNCHRONIZE') ? true : false, // solo para desarrollo y test
+        synchronize:
+          (config.get('NODE_ENV') === 'development' || config.get('NODE_ENV') === 'test') &&
+          config.get('DATABASE_SYNCHRONIZE')
+            ? true
+            : false, // desarrollo y test
         dropSchema: config.get('NODE_ENV') === 'test',
       }),
     }),
