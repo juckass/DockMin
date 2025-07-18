@@ -22,7 +22,7 @@ import { Permission } from './entities/permission.entity';
     }),
   ],
   providers: [AuthService, RolesService, PermissionsService, SeedService],
-  exports: [AuthService],
+  exports: [AuthService, PermissionsService, RolesService],
   controllers: [AuthController, RolesController, PermissionsController],
 })
 export class AuthModule implements OnModuleInit {

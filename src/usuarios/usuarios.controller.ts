@@ -75,6 +75,7 @@ export class UsuariosController {
     }
   }
 
+  
   @HasPermission()
   @Patch(':id/restaurar')
   @ApiOperation({ summary: 'Restaurar un usuario eliminado por ID' })

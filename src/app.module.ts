@@ -7,7 +7,9 @@ import { AmbientesModule } from './ambientes/ambientes.module';
 import { DockerModule } from './docker/docker.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AppController } from './app.controller';
+import { PermissionSyncService } from './auth/permission-sync.service';
 import { AuthModule } from './auth/auth.module';
+import { DiscoveryModule } from '@golevelup/nestjs-discovery';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,8 +35,17 @@ import { AuthModule } from './auth/auth.module';
     DockerModule,
     UsuariosModule,
     AuthModule,
+    DiscoveryModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    PermissionSyncService,
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly permissionSyncService: PermissionSyncService) {}
+
+  async onApplicationBootstrap() {
+    await this.permissionSyncService.syncPermissions();
+  }
+}

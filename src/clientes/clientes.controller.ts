@@ -5,12 +5,14 @@ import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Like } from 'typeorm';
 import { clienteCreateBodyDoc, clienteCreateResponseDoc, clienteFindAllQueryDocs, clienteFindOneResponseDoc, clienteFindOneErrorDoc, clienteUpdateBodyDoc, clienteUpdateResponseDoc, clienteUpdateErrorDoc } from './docs/clientes-swagger.docs';
+import { HasPermission } from '../auth/decorators/has-permission.decorator';
 
 @ApiTags('Clientes')
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
+  @HasPermission()
   @Post()
   @ApiBody(clienteCreateBodyDoc)
   @ApiResponse(clienteCreateResponseDoc)
@@ -18,6 +20,7 @@ export class ClientesController {
     return this.clientesService.create(createClienteDto);
   }
 
+  @HasPermission()
   @Get()
   @ApiQuery(clienteFindAllQueryDocs[0])
   @ApiQuery(clienteFindAllQueryDocs[1])
@@ -37,6 +40,7 @@ export class ClientesController {
     });
   }
 
+  @HasPermission()
   @Get(':id')
   @ApiResponse(clienteFindOneResponseDoc)
   @ApiResponse(clienteFindOneErrorDoc)
@@ -44,6 +48,7 @@ export class ClientesController {
     return this.clientesService.findOne(id);
   }
 
+  @HasPermission()
   @Put(':id')
   @ApiBody(clienteUpdateBodyDoc)
   @ApiResponse(clienteUpdateResponseDoc)
@@ -54,7 +59,8 @@ export class ClientesController {
   ) {
     return this.clientesService.update(id, updateClienteDto);
   }
-
+  
+  @HasPermission()
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'Cliente eliminado.' })
   @ApiResponse({ status: 404, description: 'No se pudo eliminar: cliente no encontrado.' })

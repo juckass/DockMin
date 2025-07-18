@@ -4,6 +4,7 @@ import { DockerService } from './docker.service';
 import { AmbientesService } from '../ambientes/ambientes.service';
 import { DockerCommandResultDto } from './dto/docker-command-result.dto';
 import { dockerUpResponseDoc, dockerDownResponseDoc, dockerPsResponseDoc } from './docs/docker-swagger.docs';
+import { HasPermission } from '../auth/decorators/has-permission.decorator';
 
 @ApiTags('Docker')
 @ApiExtraModels(DockerCommandResultDto)
@@ -21,6 +22,7 @@ export class DockerController {
      * - dockerVersion: versión instalada de Docker
      * - timestamp: fecha y hora de la consulta
      */
+    @HasPermission()
     @Get('status')
     @ApiOperation({ summary: 'Estado general de Docker', description: 'Devuelve si Docker está corriendo, si el usuario tiene permisos y la versión instalada.' })
     @ApiResponse({ status: 200, description: 'Estado de Docker', schema: { example: {
@@ -47,6 +49,7 @@ export class DockerController {
      * Levanta un ambiente Docker ejecutando el comando definido en comandoUp.
      * @param id ID del ambiente a levantar
      */
+    @HasPermission()
     @Post('up/:id')
     @ApiOperation({ summary: 'Levantar ambiente', description: 'Ejecuta el comando de subida (up) para el ambiente especificado.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
@@ -61,6 +64,7 @@ export class DockerController {
      * Baja un ambiente Docker ejecutando el comando definido en comandoDown.
      * @param id ID del ambiente a bajar
      */
+    @HasPermission()
     @Post('down/:id')
     @ApiOperation({ summary: 'Bajar ambiente', description: 'Ejecuta el comando de bajada (down) para el ambiente especificado.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
@@ -75,6 +79,7 @@ export class DockerController {
      * Muestra el estado de los contenedores de un ambiente usando docker compose ps.
      * @param id ID del ambiente a consultar
      */
+    @HasPermission()
     @Post('ps/:id')
     @ApiOperation({ summary: 'Estado de contenedores', description: 'Muestra el estado de los contenedores del ambiente usando docker compose ps.' })
     @ApiParam({ name: 'id', type: Number, description: 'ID del ambiente' })
