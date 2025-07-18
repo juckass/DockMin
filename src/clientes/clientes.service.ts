@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, Not, IsNull } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -98,7 +98,45 @@ export class ClientesService {
     if (result.affected === 0) {
       throw new NotFoundException('No se pudo eliminar: cliente no encontrado');
     }
-    return result;
+    return { message: 'Cliente eliminado correctamente.' };
+  }
+
+  /**
+   * Lista solo los clientes eliminados (borrado lógico)
+   */
+  async findAllDeleted(query: { page?: number; limit?: number }) {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? query.limit : 10;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.clienteRepository.findAndCount({
+      withDeleted: true,
+      where: {
+        deletedAt: Not(IsNull()),
+      },
+      skip,
+      take: limit,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Restaura un cliente eliminado lógicamente
+   */
+  async restore(id: number) {
+    const result = await this.clienteRepository.restore(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('No se pudo restaurar: cliente no encontrado o no estaba eliminado');
+    }
+    // Devolver el cliente restaurado
+    const cliente = await this.clienteRepository.findOneBy({ id });
+    return cliente;
   }
 
   async findAllWithDeleted() {

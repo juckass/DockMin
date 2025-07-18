@@ -60,6 +60,26 @@
             ],
             "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes", "1"] }
           }
+        },
+        {
+          "name": "Listar clientes eliminados",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
+            "url": { "raw": "{{baseUrl}}/clientes/eliminados", "host": ["{{baseUrl}}"], "path": ["clientes", "eliminados"] }
+          }
+        },
+        {
+          "name": "Restaurar cliente eliminado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}", "type": "text" }
+            ],
+            "url": { "raw": "{{baseUrl}}/clientes/1/restaurar", "host": ["{{baseUrl}}"], "path": ["clientes", "1", "restaurar"] }
+          }
         }
       ]
     },

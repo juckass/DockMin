@@ -29,6 +29,7 @@ describe('ClientesService', () => {
             findOneBy: jest.fn(),
             update: jest.fn(),
             softDelete: jest.fn(),
+            restore: jest.fn(),
           },
         },
       ],
@@ -173,7 +174,17 @@ describe('ClientesService', () => {
 
     const result = await service.remove(1);
     expect(clienteRepository.softDelete).toHaveBeenCalledWith(1);
-    expect(result).toEqual({ affected: 1 });
+    expect(result).toEqual({ message: 'Cliente eliminado correctamente.' });
+  });
+  it('should restore a cliente and return the restored object', async () => {
+    (clienteRepository.restore as jest.Mock).mockResolvedValue({ affected: 1 });
+    const cliente: Cliente = { id: 1, nombre: 'Test', slug: 'test' };
+    (clienteRepository.findOneBy as jest.Mock).mockResolvedValue(cliente);
+
+    const result = await service.restore(1);
+    expect(clienteRepository.restore).toHaveBeenCalledWith(1);
+    expect(clienteRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    expect(result).toEqual(cliente);
   });
 
   it('should throw NotFoundException if cliente to remove does not exist', async () => {

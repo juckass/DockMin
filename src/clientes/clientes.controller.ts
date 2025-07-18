@@ -46,6 +46,25 @@ export class ClientesController {
     });
   }
 
+
+  /**
+   * Lista solo los clientes eliminados (borrado lógico)
+   */
+  @HasPermission()
+  @Get('eliminados')
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Lista de clientes eliminados.' })
+  findAllDeleted(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.clientesService.findAllDeleted({
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    });
+  }
+
   @HasPermission()
   @Get(':id')
   @ApiResponse(clienteFindOneResponseDoc)
@@ -72,5 +91,17 @@ export class ClientesController {
   @ApiResponse({ status: 404, description: 'No se pudo eliminar: cliente no encontrado.' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.clientesService.remove(id);
+  }
+  
+
+  /**
+   * Restaura un cliente eliminado lógicamente
+   */
+  @HasPermission()
+  @Put(':id/restaurar')
+  @ApiResponse({ status: 200, description: 'Cliente restaurado.' })
+  @ApiResponse({ status: 404, description: 'No se pudo restaurar: cliente no encontrado o no estaba eliminado.' })
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.clientesService.restore(id);
   }
 }
