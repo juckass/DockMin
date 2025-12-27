@@ -26,7 +26,10 @@ async function bootstrap() {
   const logger = app.get(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(logger));
   
-
+  // Habilita CORS para permitir solicitudes desde cualquier origen
+  app.enableCors();
+  // Para permitir solo desde localhost:4200, descomenta la siguiente línea y comenta la actual:
+  // app.enableCors({ origin: 'http://localhost:4200', credentials: true });
 
   await app.listen(port);
 }

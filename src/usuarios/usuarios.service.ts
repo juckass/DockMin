@@ -108,7 +108,7 @@ export class UsuariosService {
 
     // Si viene roleId, actualiza la relación de rol
     let updateData = Object.fromEntries(
-      Object.entries(updateUsuarioDto).filter(([_, v]) => v !== undefined && v !== null && _ !== 'roleId')
+      Object.entries(updateUsuarioDto).filter(([_, v]) => v !== undefined)
     );
 
     if (updateUsuarioDto.roleId) {
